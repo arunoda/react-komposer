@@ -10,6 +10,11 @@
     "node": true
   },
 
+  "globals": {
+    "window": true,
+    "Tracker": true
+  },
+
   "ecmaFeatures": {
     "arrowFunctions": true,
     "binaryLiterals": true,
