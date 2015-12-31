@@ -31,35 +31,28 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _hoistNonReactStatics = require('hoist-non-react-statics');
-
-var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
-
-var _invariant = require('invariant');
-
-var _invariant2 = _interopRequireDefault(_invariant);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _React = typeof React !== 'undefined' ? React : require('react');
+var React = _React;
+var hoistStatics = require('hoist-non-react-statics');
+var invariant = require('invariant');
 
 function DefaultErrorComponent(_ref) {
   var error = _ref.error;
 
-  return _react2.default.createElement(
+  return React.createElement(
     'pre',
     { style: { color: 'red' } },
     error.message,
     ' ',
-    _react2.default.createElement('br', null),
+    React.createElement('br', null),
     error.stack
   );
 }
 
 function DefaultLoadingComponent() {
-  return _react2.default.createElement(
+  return React.createElement(
     'p',
     null,
     'Loading...'
@@ -68,7 +61,7 @@ function DefaultLoadingComponent() {
 
 function bindData(fn) {
   return function (ChildComponent, L, E) {
-    (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
+    invariant(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
 
     var LoadingComponent = L || DefaultLoadingComponent;
     var ErrorComponent = E || DefaultErrorComponent;
@@ -110,12 +103,12 @@ function bindData(fn) {
           var error = this._getError();
           var loading = this._isLoading();
 
-          return _react2.default.createElement(
+          return React.createElement(
             'div',
             null,
-            error ? _react2.default.createElement(ErrorComponent, { error: error }) : null,
-            !error && loading ? _react2.default.createElement(LoadingComponent, null) : null,
-            !error && !loading ? _react2.default.createElement(ChildComponent, this._getProps()) : null
+            error ? React.createElement(ErrorComponent, { error: error }) : null,
+            !error && loading ? React.createElement(LoadingComponent, null) : null,
+            !error && !loading ? React.createElement(ChildComponent, this._getProps()) : null
           );
         }
       }, {
@@ -127,7 +120,7 @@ function bindData(fn) {
 
           this._stop = fn(props, function (error, payload) {
             if (error) {
-              (0, _invariant2.default)(error.message && error.stack, 'Passed error should be an instance of an Error.');
+              invariant(error.message && error.stack, 'Passed error should be an instance of an Error.');
             }
 
             var state = {
@@ -175,7 +168,7 @@ function bindData(fn) {
         }
       }]);
       return Container;
-    })(_react2.default.Component);
+    })(React.Component);
 
     var childDisplayName =
     // Get the display name if it's set.
@@ -186,6 +179,6 @@ function bindData(fn) {
     'ChildComponent';
 
     Container.displayName = 'Container(' + childDisplayName + ')';
-    return (0, _hoistNonReactStatics2.default)(Container, ChildComponent);
+    return hoistStatics(Container, ChildComponent);
   };
 }
