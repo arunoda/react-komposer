@@ -189,3 +189,7 @@ function bindData(fn) {
     return (0, _hoistNonReactStatics2.default)(Container, ChildComponent);
   };
 }
+
+if (typeof window !== 'undefined') {
+  window.ReactDataBinder = { bindData: bindData };
+}
