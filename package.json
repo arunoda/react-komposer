@@ -38,7 +38,8 @@
     "browserify": "12.x.x",
     "eslint-plugin-react": "3.x.x",
     "enzyme": "1.x.x",
-    "uglifyify": "3.x.x"
+    "uglifyify": "3.x.x",
+    "exposify": "0.5.x"
   },
   "peerDependencies": {
     "react": ">=0.14.3 <=0.15.0"
