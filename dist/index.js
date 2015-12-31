@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.DefaultErrorComponent = DefaultErrorComponent;
 exports.DefaultLoadingComponent = DefaultLoadingComponent;
 exports.bindData = bindData;
+exports.bindTrackerData = bindTrackerData;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -190,6 +191,21 @@ function bindData(fn) {
   };
 }
 
+function bindTrackerData(reactiveFn) {
+  var onPropsChange = function onPropsChange(props, onData) {
+    var handler = Tracker.autorun(function () {
+      reactiveFn(props, onData);
+    });
+
+    return handler.stop.bind(handler);
+  };
+
+  return bindData(onPropsChange);
+}
+
 if (typeof window !== 'undefined') {
-  window.ReactDataBinder = { bindData: bindData };
+  window.ReactDataBinder = {
+    bindData: bindData,
+    bindTrackerData: bindTrackerData
+  };
 }
