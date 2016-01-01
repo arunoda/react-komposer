@@ -77,7 +77,7 @@ import ReactDOM from 'react-dom';
 ReactDOM.render(<Clock />, document.body);
 ```
 
-See this in live: <https://jsbin.com/bejiqu/1/edit?js,output>
+See this in live: https://jsfiddle.net/07pzx7d7/1/
 
 ### Additional Benefits
 
