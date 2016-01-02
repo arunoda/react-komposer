@@ -1,4 +1,4 @@
-# react-data-binder
+# react-komposer
 
 Simple way to bind data into React Components via props.
 
