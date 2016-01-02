@@ -1,6 +1,6 @@
 # react-komposer
 
-Simple way to bind data into React Components via props.
+Let's compose React containers and feed data into components via props.
 
 ## TOC
 
