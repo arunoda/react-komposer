@@ -228,26 +228,24 @@ function composeWithPromise(fn) {
 }
 
 function composeWithObservable(fn) {
-  var onPropsChange = function onPropsChange(props, onData) {
+  var onPropsChange = function onPropsChange(props, sendData) {
     var observable = fn(props);
     (0, _invariant2.default)(typeof observable.subscribe === 'function', 'Should return an observable from the callback of `composeWithObservable`');
 
-    onData();
-    var sub = observable.subscribe(function (data) {
-      onData(null, data);
-    });
+    sendData();
+    var onData = function onData(data) {
+      (0, _invariant2.default)((typeof data === 'undefined' ? 'undefined' : (0, _typeof3.default)(data)) === 'object', 'Should return a plain object from the promise');
+      var clonedData = (0, _extends3.default)({}, data);
+      sendData(null, clonedData);
+    };
 
+    var onError = function onError(err) {
+      sendData(err);
+    };
+
+    var sub = observable.subscribe(onData, onError);
     return sub.completed.bind(sub);
   };
 
   return compose(onPropsChange);
-}
-
-if (typeof window !== 'undefined') {
-  window.ReactDataBinder = {
-    compose: compose,
-    composeWithTracker: composeWithTracker,
-    composeWithPromise: composeWithPromise,
-    composeWithObservable: composeWithObservable
-  };
 }
