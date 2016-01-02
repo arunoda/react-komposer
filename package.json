@@ -1,10 +1,10 @@
 {
-  "name": "react-data-binder",
+  "name": "react-kompose",
   "version": "1.1.1",
-  "description": "Easily bind data into React Components via props.",
+  "description": "Compose React containers and feed data into components.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kadirahq/react-data-binder.git"
+    "url": "https://github.com/kadirahq/react-komposer.git"
   },
   "license": "MIT",
   "options": {

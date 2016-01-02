@@ -5,8 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DefaultErrorComponent = DefaultErrorComponent;
 exports.DefaultLoadingComponent = DefaultLoadingComponent;
-exports.bindData = bindData;
-exports.bindTrackerData = bindTrackerData;
+exports.compose = compose;
+exports.composeWithTracker = composeWithTracker;
+exports.composeWithPromise = composeWithPromise;
+
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -67,7 +72,7 @@ function DefaultLoadingComponent() {
   );
 }
 
-function bindData(fn) {
+function compose(fn) {
   return function (ChildComponent, L, E) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
 
@@ -191,7 +196,7 @@ function bindData(fn) {
   };
 }
 
-function bindTrackerData(reactiveFn) {
+function composeWithTracker(reactiveFn) {
   var onPropsChange = function onPropsChange(props, onData) {
     var handler = Tracker.autorun(function () {
       reactiveFn(props, onData);
@@ -200,12 +205,31 @@ function bindTrackerData(reactiveFn) {
     return handler.stop.bind(handler);
   };
 
-  return bindData(onPropsChange);
+  return compose(onPropsChange);
+}
+
+function composeWithPromise(fn) {
+  var onPropsChange = function onPropsChange(props, onData) {
+    var promise = fn(props);
+    (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'You must return a promise from the callback of `composeWithPromise`');
+
+    onData();
+    promise.then(function (data) {
+      (0, _invariant2.default)((typeof data === 'undefined' ? 'undefined' : (0, _typeof3.default)(data)) === 'object', 'You must return a plain object from the promise');
+      var clonedData = (0, _extends3.default)({}, data);
+      onData(null, clonedData);
+    }).catch(function (err) {
+      onData(err);
+    });
+  };
+
+  return compose(onPropsChange);
 }
 
 if (typeof window !== 'undefined') {
   window.ReactDataBinder = {
-    bindData: bindData,
-    bindTrackerData: bindTrackerData
+    compose: compose,
+    composeWithTracker: composeWithTracker,
+    composeWithPromise: composeWithPromise
   };
 }
