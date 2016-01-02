@@ -8,6 +8,7 @@ exports.DefaultLoadingComponent = DefaultLoadingComponent;
 exports.compose = compose;
 exports.composeWithTracker = composeWithTracker;
 exports.composeWithPromise = composeWithPromise;
+exports.composeWithObservable = composeWithObservable;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -211,11 +212,11 @@ function composeWithTracker(reactiveFn) {
 function composeWithPromise(fn) {
   var onPropsChange = function onPropsChange(props, onData) {
     var promise = fn(props);
-    (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'You must return a promise from the callback of `composeWithPromise`');
+    (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'Should return a promise from the callback of `composeWithPromise`');
 
     onData();
     promise.then(function (data) {
-      (0, _invariant2.default)((typeof data === 'undefined' ? 'undefined' : (0, _typeof3.default)(data)) === 'object', 'You must return a plain object from the promise');
+      (0, _invariant2.default)((typeof data === 'undefined' ? 'undefined' : (0, _typeof3.default)(data)) === 'object', 'Should return a plain object from the promise');
       var clonedData = (0, _extends3.default)({}, data);
       onData(null, clonedData);
     }).catch(function (err) {
@@ -226,10 +227,27 @@ function composeWithPromise(fn) {
   return compose(onPropsChange);
 }
 
+function composeWithObservable(fn) {
+  var onPropsChange = function onPropsChange(props, onData) {
+    var observable = fn(props);
+    (0, _invariant2.default)(typeof observable.subscribe === 'function', 'Should return an observable from the callback of `composeWithObservable`');
+
+    onData();
+    var sub = observable.subscribe(function (data) {
+      onData(null, data);
+    });
+
+    return sub.completed.bind(sub);
+  };
+
+  return compose(onPropsChange);
+}
+
 if (typeof window !== 'undefined') {
   window.ReactDataBinder = {
     compose: compose,
     composeWithTracker: composeWithTracker,
-    composeWithPromise: composeWithPromise
+    composeWithPromise: composeWithPromise,
+    composeWithObservable: composeWithObservable
   };
 }
