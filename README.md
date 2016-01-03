@@ -1,6 +1,6 @@
 # react-komposer
 
-Let's compose React containers and feed data into components via props.
+Let's compose React containers and feed data into components.
 
 ## TOC
 
@@ -9,7 +9,7 @@ Let's compose React containers and feed data into components via props.
 * [Basic Usage](#basic-usage)
 * [API](#api)
 * [Using with XXX](#using-with-xxx)
-    - [Bind GraphQL queries via Lokka](#bind-graphql-queries-via-lokka)
+    - [Using with Promises](#using-with-promises)
     - [Using with Meteor](#using-with-meteor)
     - [Using with Rx.js Observables](#using-with-rxjs-observables)
     - [Using with Redux](#using-with-redux)
@@ -17,26 +17,27 @@ Let's compose React containers and feed data into components via props.
 
 ## Why?
 
-Normally, when you are rending a React component. This is the usual process you do:
+Lately, in React we tried to avoid states as possible we can and use props to pass data and actions. So, we call these components **Dumb Components** or **UI components.**
 
-* Start showing a loading screen.
-* Fetch data and wait.
-* Once data received, render those data
+And there is another layer of components, which knows how to **fetch data**. We call them as **Containers**. Containers usually do things like this:
 
-Then if something goes wrong, you need to show an error.
+* Request for data (invoke a subscription or just fetch it).
+* Show a loading screen while the data is fetching.
+* Once data arrives, pass it to the UI component.
+* If there is an error, show it to the user.
+* It may need to refetch or re-subscribe when props changed.
+* It needs to cleanup resources (like subscriptions) when the container is unmounting.
 
-Additionally, if you create a subscription then you need to **clean up** those subscriptions when the component is dying.
+If you want to do these your self, you have to do a lot of **repetitive tasks**. And this is good place for **human errors**.
 
-So, you have to do a lot of stuff.
+**Meet React Komposer**
 
----
-
-That's what we are going to fix with this project. You simply tell it how to get data and clean up resources. Then it'll do the hard work you. This is a universal project and work with any kind of data source, whether it's GraphQL, Meteor, Redux or Rx.js observable.
+That's what we are going to fix with this project. You simply tell it how to get data and clean up resources. Then it'll do the hard work you. This is a universal project and work with **any kind of data source**, whether it's based Promises, Rx.JS observables or even Meteor's Tracker.
 
 ## Installation
 
 ```
-npm i --save react-data-binder
+npm i --save react-komposer
 ```
 
 ## Basic Usage
@@ -66,8 +67,8 @@ On the above function, we get data for every seconds and send it via `onData`. A
 Okay. Now it's time to create the clock:
 
 ```js
-import { bindData } from 'react-data-binder';
-const Clock = bindData(onPropsChange)(Time);
+import { compose } from 'react-komposer';
+const Clock = compose(onPropsChange)(Time);
 ```
 
 That's it. Now render the clock to the DOM. 
@@ -77,7 +78,7 @@ import ReactDOM from 'react-dom';
 ReactDOM.render(<Clock />, document.body);
 ```
 
-See this in live: https://jsfiddle.net/07pzx7d7/1/
+See this in live: <https://jsfiddle.net/arunoda/jxse2yw8>
 
 ### Additional Benefits
 
@@ -86,15 +87,13 @@ Other than main benefits, now it's super easy to test our UI code. We can easily
 * For that UI, simply test the plain react component. In this case, `Time` (You can use [enzyme](https://github.com/airbnb/enzyme) for that).
 * Then test `onPropsChange` for different scenarios.
 
-Do this for all of your components. You can test your code pretty easily.
-
 ## API
 
-You can customize the higher order component created by `bindData` in few ways. Let's discuss.
+You can customize the higher order component created by `compose` in few ways. Let's discuss.
 
 ### Handling Errors
 
-Rather than showing the data, something you need to deal with error. Here's how to use `bindData` for that:
+Rather than showing the data, something you need to deal with error. Here's how to use `compose` for that:
 
 ```js
 const onPropsChange = (props, onData) => {
@@ -145,7 +144,7 @@ ReactDOM.render((
 ), document.body);
 ```
 
-See this in live: <https://jsbin.com/nohuqa/edit?js,output>
+See this in live: <https://jsfiddle.net/arunoda/7qy1mxc7/2>
 
 ### Change the Loading Component
 
@@ -164,29 +163,41 @@ const Clock = bindData(onPropsChange)(Time, null, MyError);
 
 ## Using with XXX
 
-You can use `react-bind-data` with a huge range of projects. Let me show you couple of them:
+### Using with Promises
 
-### Bind GraphQL queries via Lokka
+For this, you can use the `composeWithPromises` instead of `compose`.
+
 ```js
-const Time = ({time}) => (<div>Time is: {time}</div>);
-const client = new Lokka({...});
-const query = `
-    {
-        time: serverTime
-    }
-`;
+import {composeWithPromise} from 'react-komposer'
 
-const onPropsChange = (props, onData) => {
-  return client.watchQuery(query);
+// Create a component to display Time
+const Time = ({time}) => (<div>{time}</div>);
+
+// Assume this get's the time from the Server
+const getServerTime = () => {
+  return new Promise((resolve) => {
+    const time = new Date().toString();
+    setTimeout(() => resolve({time}), 2000);
+  });
 };
-const Clock = bindData(onPropsChange)(Time);
+
+// Create the composer function and tell how to fetch data
+const composerFunction = (props) => {
+  return getServerTime();
+};
+
+// Compose the container
+const Clock = composeWithPromise(composerFunction)(Time, Loading);
+
+// Render the container
+ReactDOM.render(<Clock />, document.getElementById('react-root'));
 ```
 
-Check here to it in action: <https://goo.gl/K1LhYk/>
+See this live: <https://jsfiddle.net/arunoda/8wgeLexy/3/>
 
 ### Using with Meteor
 
-For that you need to use `bindTrackerData` method instead of `bindData`. Then you can watch any Reactive data inside that.
+For that you need to use `composeWithTracker` method instead of `compose`. Then you can watch any Reactive data inside that.
 
 ```js
 const Time = ({time}) => (<div>Time is: {time}</div>);
@@ -200,29 +211,32 @@ const onPropsChange = (props, onData) => {
   }
 };
 
-// Note the use of bindTrackerData
-const Clock = bindTrackerData(onPropsChange)(Time);
+// Note the use of composeWithTracker
+const Clock = composeWithTracker(onPropsChange)(Time);
 ```
 
 ### Using with Rx.js Observables
 
 ```js
-var source = Rx.Observable.interval(1000);
+import {composeWithObservable} from 'react-komposer'
 
-const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
+// Create a component to display Time
+const Time = ({time}) => (<div>{time}</div>);
 
-const onPropsChange = (props, onData) => {
-  const sub = source.subscribe(() => {
-    const time = new Date().toString();
-    onData(null, {time})
-  });
-  return sub.completed.bind(sub);
-};
+const now = Rx.Observable.interval(1000)
+  .map(() => ({time: new Date().toString()}));
 
-const Clock = bindData(onPropsChange)(Time);
+// Create the composer function and tell how to fetch data
+const composerFunction = (props) => now;
+
+// Compose the container
+const Clock = composeWithObservable(composerFunction)(Time);
+
+// Render the container
+ReactDOM.render(<Clock />, document.getElementById('react-root'));
 ```
 
-Try this live: <https://jsbin.com/bofaxi/edit?js,output>
+Try this live: <https://jsfiddle.net/arunoda/Lsdekh4y/2/>
 
 ### Using with Redux
 
@@ -248,6 +262,7 @@ setInterval(() => {
   });
 }, 1000);
 
+
 const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
 
 const onPropsChange = (props, onData) => {
@@ -257,13 +272,13 @@ const onPropsChange = (props, onData) => {
   });
 };
 
-const Clock = bindData(onPropsChange)(Time);
+const Clock = compose(onPropsChange)(Time);
                    
 ReactDOM.render(<Clock />, document.getElementById('react'))
 ```
 
-Try this live: <https://jsbin.com/xazuzo/2/edit?html,js,output>
+Try this live: <https://jsfiddle.net/arunoda/wm6romh4/>
 
 ## Caveats
 
-* In the server, we won't be able to cleanup resources even if you return the cleanup function. That's because, there is no functionality called unmount in the server. So, make sure to handle the cleanup logic by yourself in the **server**.
+* In the server, we won't be able to cleanup resources even if you return the cleanup function. That's because, there is no functionality to detect component unmount in the server. So, make sure to handle the cleanup logic by yourself in the **server**.
