@@ -57,7 +57,7 @@ const onPropsChange = (props, onData) => {
     onData(null, {time});
   }, 1000);
 
-  const cleanup = () => clearInteval(handle);
+  const cleanup = () => clearInterval(handle);
   return cleanup;
 };
 ```
@@ -128,7 +128,7 @@ const onPropsChange = (props, onData) => {
     onData(null, {time});
   }, 1000);
 
-  const cleanup = () => clearInteval(handle);
+  const cleanup = () => clearInterval(handle);
   return cleanup;
 };
 ```
