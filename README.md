@@ -201,7 +201,7 @@ For that you need to use `composeWithTracker` method instead of `compose`. Then 
 
 ```js
 const Time = ({time}) => (<div>Time is: {time}</div>);
-const onPropsChange = (props, onData) => {
+const composerFunction = (props, onData) => {
   const handler = Meteor.subscribe('serverTime');
   if(hander.ready()) {
     const {time} = ServerTimeCollection.findOne();
@@ -212,8 +212,22 @@ const onPropsChange = (props, onData) => {
 };
 
 // Note the use of composeWithTracker
-const Clock = composeWithTracker(onPropsChange)(Time);
+const Clock = composeWithTracker(composerFunction)(Time);
 ```
+
+In addition to above, you can also return a cleanup function from the composer function. See following example:
+
+```js
+const Time = ({time}) => (<div>Time is: {time}</div>);
+const composerFunction = (props, onData) => {
+  // tracker related code
+  return () => {console.log('Container disposed!');}
+};
+
+// Note the use of composeWithTracker
+const Clock = composeWithTracker(composerFunction)(Time);
+```
+
 
 ### Using with Rx.js Observables
 
