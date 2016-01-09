@@ -160,6 +160,25 @@ const MyError = ({error}) => (<div>Error: {error.message}</div>);
 const Clock = bindData(onPropsChange, null, MyError)(Time);
 ```
 
+### Compose Multiple Containers
+
+Sometimes, we need to compose multiple containers at once, in order to use different data sources. Checkout following examples:
+
+```js
+const Clock = composeWithObservable(composerFn1)(Time);
+const MeteorClock = composeWithTracker(composerFn2)(Clock);
+
+export default MeteorClock;
+```
+
+For the above case, we've a utility called `composeAll` to make our life easier. See how to use it:
+
+```js
+export default composeAll(
+  composeWithObservable(composerFn1)
+  composeWithTracker(composerFn2)
+)(Time)
+```
 
 ## Using with XXX
 
