@@ -150,14 +150,14 @@ See this in live: <https://jsfiddle.net/arunoda/7qy1mxc7/2>
 
 ```js
 const MyLoading = () => (<div>Hmm...</div>);
-const Clock = bindData(onPropsChange)(Time, MyLoading);
+const Clock = bindData(onPropsChange, MyLoading)(Time);
 ```
 
 ### Change the Error Component
 
 ```js
 const MyError = ({error}) => (<div>Error: {error.message}</div>);
-const Clock = bindData(onPropsChange)(Time, null, MyError);
+const Clock = bindData(onPropsChange, null, MyError)(Time);
 ```
 
 
