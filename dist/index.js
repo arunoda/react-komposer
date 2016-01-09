@@ -9,6 +9,7 @@ exports.compose = compose;
 exports.composeWithTracker = composeWithTracker;
 exports.composeWithPromise = composeWithPromise;
 exports.composeWithObservable = composeWithObservable;
+exports.composeAll = composeAll;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -73,12 +74,12 @@ function DefaultLoadingComponent() {
   );
 }
 
-function compose(fn) {
-  return function (ChildComponent, L, E) {
+function compose(fn, L1, E1) {
+  return function (ChildComponent, L2, E2) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
 
-    var LoadingComponent = L || DefaultLoadingComponent;
-    var ErrorComponent = E || DefaultErrorComponent;
+    var LoadingComponent = L1 || L2 || DefaultLoadingComponent;
+    var ErrorComponent = E1 || E2 || DefaultErrorComponent;
 
     var Container = (function (_React$Component) {
       (0, _inherits3.default)(Container, _React$Component);
@@ -199,11 +200,17 @@ function compose(fn) {
 
 function composeWithTracker(reactiveFn) {
   var onPropsChange = function onPropsChange(props, onData) {
+    var trackerCleanup = undefined;
     var handler = Tracker.autorun(function () {
-      reactiveFn(props, onData);
+      trackerCleanup = reactiveFn(props, onData);
     });
 
-    return handler.stop.bind(handler);
+    return function () {
+      if (typeof trackerCleanup === 'function') {
+        trackerCleanup();
+      }
+      return handler.stop();
+    };
   };
 
   return compose(onPropsChange);
@@ -248,4 +255,32 @@ function composeWithObservable(fn) {
   };
 
   return compose(onPropsChange);
+}
+
+// utility function to compose multiple composers at once.
+function composeAll() {
+  for (var _len = arguments.length, composers = Array(_len), _key = 0; _key < _len; _key++) {
+    composers[_key] = arguments[_key];
+  }
+
+  return function (BaseComponent) {
+    if (BaseComponent === null || BaseComponent === undefined) {
+      throw new Error('Curry function of composeAll needs an input.');
+    }
+
+    var finalComponent = BaseComponent;
+    composers.forEach(function (composer) {
+      if (typeof composer !== 'function') {
+        throw new Error('Composer should be a function.');
+      }
+
+      finalComponent = composer(finalComponent);
+
+      if (finalComponent === null || finalComponent === undefined) {
+        throw new Error('Composer function should return a value.');
+      }
+    });
+
+    return finalComponent;
+  };
 }
