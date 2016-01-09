@@ -1,6 +1,6 @@
 # ChangeLog
 
-### v.Next
+### v1.1.0
 
 * Add `composeAll` utility.
 * Allow to pass custom error component and loading component as options. See: [#7](https://github.com/kadirahq/react-komposer/issues/7)
