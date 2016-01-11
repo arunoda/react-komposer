@@ -314,4 +314,10 @@ Try this live: <https://jsfiddle.net/arunoda/wm6romh4/>
 
 ## Caveats
 
-* In the server, we won't be able to cleanup resources even if you return the cleanup function. That's because, there is no functionality to detect component unmount in the server. So, make sure to handle the cleanup logic by yourself in the **server**.
+**SSR**
+
+In the server, we won't be able to cleanup resources even if you return the cleanup function. That's because, there is no functionality to detect component unmount in the server. So, make sure to handle the cleanup logic by yourself in the **server**.
+
+**Composer Rerun on any prop change**
+
+Right now, composer function is running again for any prop change. We can fix this by watching props and decide which prop has been changed. See: [#4](https://github.com/kadirahq/react-komposer/issues/4)
