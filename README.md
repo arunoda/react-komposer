@@ -222,7 +222,7 @@ For that you need to use `composeWithTracker` method instead of `compose`. Then 
 const Time = ({time}) => (<div>Time is: {time}</div>);
 const composerFunction = (props, onData) => {
   const handler = Meteor.subscribe('serverTime');
-  if(hander.ready()) {
+  if(handler.ready()) {
     const {time} = ServerTimeCollection.findOne();
     onData(null, {time});
   } else {
