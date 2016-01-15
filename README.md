@@ -234,8 +234,6 @@ const composerFunction = (props, onData) => {
 const Clock = composeWithTracker(composerFunction)(Time);
 ```
 
-See Example: <https://github.com/zvictor/komposer-meteor-example>
-
 In addition to above, you can also return a cleanup function from the composer function. See following example:
 
 ```js
@@ -248,6 +246,8 @@ const composerFunction = (props, onData) => {
 // Note the use of composeWithTracker
 const Clock = composeWithTracker(composerFunction)(Time);
 ```
+
+See Example: <https://github.com/zvictor/komposer-meteor-example>
 
 
 ### Using with Rx.js Observables
