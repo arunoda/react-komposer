@@ -1,5 +1,9 @@
 # ChangeLog
 
+### v1.2.0
+
+* Add custom loading and error components to all composers. See: [#12](https://github.com/kadirahq/react-komposer/pull/12)
+
 ### v1.1.0
 
 * Add `composeAll` utility.
