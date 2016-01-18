@@ -198,7 +198,7 @@ function compose(fn, L1, E1) {
   };
 }
 
-function composeWithTracker(reactiveFn) {
+function composeWithTracker(reactiveFn, L, E) {
   var onPropsChange = function onPropsChange(props, onData) {
     var trackerCleanup = undefined;
     var handler = Tracker.autorun(function () {
@@ -213,10 +213,10 @@ function composeWithTracker(reactiveFn) {
     };
   };
 
-  return compose(onPropsChange);
+  return compose(onPropsChange, L, E);
 }
 
-function composeWithPromise(fn) {
+function composeWithPromise(fn, L, E) {
   var onPropsChange = function onPropsChange(props, onData) {
     var promise = fn(props);
     (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'Should return a promise from the callback of `composeWithPromise`');
@@ -231,10 +231,10 @@ function composeWithPromise(fn) {
     });
   };
 
-  return compose(onPropsChange);
+  return compose(onPropsChange, L, E);
 }
 
-function composeWithObservable(fn) {
+function composeWithObservable(fn, L, E) {
   var onPropsChange = function onPropsChange(props, sendData) {
     var observable = fn(props);
     (0, _invariant2.default)(typeof observable.subscribe === 'function', 'Should return an observable from the callback of `composeWithObservable`');
@@ -254,7 +254,7 @@ function composeWithObservable(fn) {
     return sub.completed.bind(sub);
   };
 
-  return compose(onPropsChange);
+  return compose(onPropsChange, L, E);
 }
 
 // utility function to compose multiple composers at once.
