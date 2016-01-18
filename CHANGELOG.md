@@ -1,5 +1,9 @@
 # ChangeLog
 
+### v1.2.1
+
+* Stop wrapping the UI component with a div. See: [#15](https://github.com/kadirahq/react-komposer/issues/15)
+
 ### v1.2.0
 
 * Add custom loading and error components to all composers. See: [#12](https://github.com/kadirahq/react-komposer/pull/12)
