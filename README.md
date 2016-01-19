@@ -13,6 +13,7 @@ Let's compose React containers and feed data into components.
     - [Using with Meteor](#using-with-meteor)
     - [Using with Rx.js Observables](#using-with-rxjs-observables)
     - [Using with Redux](#using-with-redux)
+* [Extending](#extending)
 * [Caveats](#caveats)
 
 ## Why?
@@ -313,6 +314,33 @@ ReactDOM.render(<Clock />, document.getElementById('react'))
 ```
 
 Try this live: <https://jsfiddle.net/arunoda/wm6romh4/>
+
+## Extending
+
+Containers built by React Komposer are, still, technically just React components. It means that they can be extended in the same way you would extend any other component. Checkout following examples:
+
+
+```js
+const Tick = compose(onPropsChange)(Time);
+class Clock extends Tick {
+  componentDidMount() {
+    console.log('Clock started');
+
+    return super();
+  }
+  componentWillUnmount() {
+    console.log('Clock stopped');
+
+    return super();
+  }
+};
+Clock.displayName = 'ClockContainer';
+
+export default Clock;
+```
+
+Remember to call `super` when overiding methods already defined in the container.
+
 
 ## Caveats
 
