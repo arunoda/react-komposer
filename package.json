@@ -15,7 +15,8 @@
     "lint": "eslint ./lib",
     "lintfix": "eslint ./lib --fix",
     "testonly": "mocha $npm_package_options_mocha",
-    "test": "npm run lint && npm run testonly"
+    "test": "npm run lint && npm run testonly",
+    "test-watch": "npm run testonly -- --watch"
   },
   "browser": ".dist/browser.js",
   "devDependencies": {

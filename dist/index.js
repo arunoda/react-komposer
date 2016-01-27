@@ -118,13 +118,15 @@ function compose(fn, L1, E1) {
           var error = this._getError();
           var loading = this._isLoading();
 
-          return _react2.default.createElement(
-            'div',
-            null,
-            error ? _react2.default.createElement(ErrorComponent, { error: error }) : null,
-            !error && loading ? _react2.default.createElement(LoadingComponent, null) : null,
-            !error && !loading ? _react2.default.createElement(ChildComponent, this._getProps()) : null
-          );
+          if (error) {
+            return _react2.default.createElement(ErrorComponent, { error: error });
+          }
+
+          if (loading) {
+            return _react2.default.createElement(LoadingComponent, null);
+          }
+
+          return _react2.default.createElement(ChildComponent, this._getProps());
         }
       }, {
         key: '_subscribe',
