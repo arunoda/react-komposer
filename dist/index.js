@@ -75,6 +75,8 @@ function DefaultLoadingComponent() {
 }
 
 function compose(fn, L1, E1) {
+  var options = arguments.length <= 3 || arguments[3] === undefined ? { pure: true } : arguments[3];
+
   return function (ChildComponent, L2, E2) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
 
@@ -111,6 +113,13 @@ function compose(fn, L1, E1) {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
           this._unsubscribe();
+        }
+      }, {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate() {
+          if (!options.pure) {
+            return true;
+          }
         }
       }, {
         key: 'render',
