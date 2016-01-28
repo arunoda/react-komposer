@@ -49,6 +49,7 @@
   "dependencies": {
     "babel-runtime": "6.x.x",
     "hoist-non-react-statics": "1.x.x",
-    "invariant": "2.x.x"
+    "invariant": "2.x.x",
+    "shallowequal": "0.2.x"
   }
 }

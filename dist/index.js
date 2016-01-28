@@ -51,6 +51,10 @@ var _invariant = require('invariant');
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
+var _shallowequal = require('shallowequal');
+
+var _shallowequal2 = _interopRequireDefault(_shallowequal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function DefaultErrorComponent(_ref) {
@@ -75,6 +79,8 @@ function DefaultLoadingComponent() {
 }
 
 function compose(fn, L1, E1) {
+  var options = arguments.length <= 3 || arguments[3] === undefined ? { pure: true } : arguments[3];
+
   return function (ChildComponent, L2, E2) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
 
@@ -89,11 +95,12 @@ function compose(fn, L1, E1) {
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Container).call(this, props, context));
 
-        _this.state = { _fnData: {} };
-        _this._subscribe(props);
+        _this.state = {};
+
         // XXX: In the server side environment, we need to
         // stop the subscription right away. Otherwise, it's a starting
         // point to huge subscription leak.
+        _this._subscribe(props);
         return _this;
       }
 
@@ -111,6 +118,15 @@ function compose(fn, L1, E1) {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
           this._unsubscribe();
+        }
+      }, {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState) {
+          if (!options.pure) {
+            return true;
+          }
+
+          return !(0, _shallowequal2.default)(this.props, nextProps) || this.state.error !== nextState.error || !(0, _shallowequal2.default)(this.state.payload, nextState.payload);
         }
       }, {
         key: 'render',
@@ -140,9 +156,7 @@ function compose(fn, L1, E1) {
               (0, _invariant2.default)(error.message && error.stack, 'Passed error should be an instance of an Error.');
             }
 
-            var state = {
-              _fnData: { error: error, payload: payload }
-            };
+            var state = { error: error, payload: payload };
 
             if (_this2._mounted) {
               _this2.setState(state);
@@ -161,9 +175,8 @@ function compose(fn, L1, E1) {
       }, {
         key: '_getProps',
         value: function _getProps() {
-          var _fnData = this.state._fnData;
-          var _fnData$payload = _fnData.payload;
-          var payload = _fnData$payload === undefined ? {} : _fnData$payload;
+          var _state$payload = this.state.payload;
+          var payload = _state$payload === undefined ? {} : _state$payload;
 
           var props = (0, _extends3.default)({}, this.props, payload);
 
@@ -172,16 +185,16 @@ function compose(fn, L1, E1) {
       }, {
         key: '_getError',
         value: function _getError() {
-          var _fnData = this.state._fnData;
+          var error = this.state.error;
 
-          return _fnData.error;
+          return error;
         }
       }, {
         key: '_isLoading',
         value: function _isLoading() {
-          var _fnData = this.state._fnData;
+          var payload = this.state.payload;
 
-          return !_fnData.payload;
+          return !Boolean(payload);
         }
       }]);
       return Container;
@@ -200,7 +213,7 @@ function compose(fn, L1, E1) {
   };
 }
 
-function composeWithTracker(reactiveFn, L, E) {
+function composeWithTracker(reactiveFn, L, E, options) {
   var onPropsChange = function onPropsChange(props, onData) {
     var trackerCleanup = undefined;
     var handler = Tracker.autorun(function () {
@@ -215,10 +228,10 @@ function composeWithTracker(reactiveFn, L, E) {
     };
   };
 
-  return compose(onPropsChange, L, E);
+  return compose(onPropsChange, L, E, options);
 }
 
-function composeWithPromise(fn, L, E) {
+function composeWithPromise(fn, L, E, options) {
   var onPropsChange = function onPropsChange(props, onData) {
     var promise = fn(props);
     (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'Should return a promise from the callback of `composeWithPromise`');
@@ -233,10 +246,10 @@ function composeWithPromise(fn, L, E) {
     });
   };
 
-  return compose(onPropsChange, L, E);
+  return compose(onPropsChange, L, E, options);
 }
 
-function composeWithObservable(fn, L, E) {
+function composeWithObservable(fn, L, E, options) {
   var onPropsChange = function onPropsChange(props, sendData) {
     var observable = fn(props);
     (0, _invariant2.default)(typeof observable.subscribe === 'function', 'Should return an observable from the callback of `composeWithObservable`');
@@ -256,7 +269,7 @@ function composeWithObservable(fn, L, E) {
     return sub.completed.bind(sub);
   };
 
-  return compose(onPropsChange, L, E);
+  return compose(onPropsChange, L, E, options);
 }
 
 // utility function to compose multiple composers at once.
