@@ -72,7 +72,7 @@ import { compose } from 'react-komposer';
 const Clock = compose(onPropsChange)(Time);
 ```
 
-That's it. Now render the clock to the DOM. 
+That's it. Now render the clock to the DOM.
 
 ```js
 import ReactDOM from 'react-dom';
@@ -103,7 +103,7 @@ const onPropsChange = (props, onData) => {
 };
 ```
 
-Then error will be rendered to the screen (in the place where component is rendered). You must provide a JavaScript error object. 
+Then error will be rendered to the screen (in the place where component is rendered). You must provide a JavaScript error object.
 
 You can clear it by passing a some data again like this:
 
@@ -181,11 +181,23 @@ export default composeAll(
 )(Time)
 ```
 
+### Pure Containers
+
+`react-komposer` checks the purity of payload, error and props and avoid unnecessary render function calls. That means we've implemented `shouldComponentUpdate` lifecycle hook and follows something similar to React's [shallowCompare](https://facebook.github.io/react/docs/shallow-compare.html).
+
+If you need to turn this functionality you can turn it off like this:
+
+```js
+// You can use `composeWithPromise` or any other compose APIs
+// instead of `compose`.
+const Clock = compose(onPropsChange, null, null, {pure: false})(Time);
+```
+
 ## Using with XXX
 
 ### Using with Promises
 
-For this, you can use the `composeWithPromises` instead of `compose`.
+For this, you can use the `composeWithPromise` instead of `compose`.
 
 ```js
 import {composeWithPromise} from 'react-komposer'
@@ -293,7 +305,7 @@ const store = Redux.createStore((state = defaultState, action) => {
 
 setInterval(() => {
   store.dispatch({
-    type: 'UPDATE_TIME', 
+    type: 'UPDATE_TIME',
     time: new Date().toString()
   });
 }, 1000);
@@ -309,7 +321,7 @@ const onPropsChange = (props, onData) => {
 };
 
 const Clock = compose(onPropsChange)(Time);
-                   
+
 ReactDOM.render(<Clock />, document.getElementById('react'))
 ```
 
@@ -339,7 +351,7 @@ Clock.displayName = 'ClockContainer';
 export default Clock;
 ```
 
-Remember to call `super` when overiding methods already defined in the container.
+Remember to call `super` when overriding methods already defined in the container.
 
 
 ## Caveats
