@@ -1,5 +1,8 @@
 # ChangeLog
 
+### v1.3.0
+* Implement purity in containers. See: [#19](https://github.com/kadirahq/react-komposer/issues/19).
+
 ### v1.2.1
 
 * Stop wrapping the UI component with a div. See: [#15](https://github.com/kadirahq/react-komposer/issues/15)
