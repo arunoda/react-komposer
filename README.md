@@ -232,19 +232,17 @@ See this live: <https://jsfiddle.net/arunoda/8wgeLexy/3/>
 For that you need to use `composeWithTracker` method instead of `compose`. Then you can watch any Reactive data inside that.
 
 ```js
-const Time = ({time}) => (<div>Time is: {time}</div>);
-const composerFunction = (props, onData) => {
-  const handler = Meteor.subscribe('serverTime');
-  if(handler.ready()) {
-    const {time} = ServerTimeCollection.findOne();
-    onData(null, {time});
-  } else {
-    onData(null, null);
-  }
+import {composeWithTracker} from 'react-komposer';
+import PostList from '../components/post_list.jsx';
+
+function composer(props, onData) {
+  if (Meteor.subscribe('posts').ready()) {
+    const posts = Posts.find({}, {sort: {_id: 1}}).fetch();
+    onData(null, {posts});
+  };
 };
 
-// Note the use of composeWithTracker
-const Clock = composeWithTracker(composerFunction)(Time);
+export default composeWithTracker(composer)(PostList);
 ```
 
 In addition to above, you can also return a cleanup function from the composer function. See following example:
@@ -260,7 +258,7 @@ const composerFunction = (props, onData) => {
 const Clock = composeWithTracker(composerFunction)(Time);
 ```
 
-See Example: <https://github.com/zvictor/komposer-meteor-example>
+For more information, refer this article: [Using Meteor Data and React with Meteor 1.3](https://voice.kadira.io/using-meteor-data-and-react-with-meteor-1-3-13cb0935dedb)
 
 
 ### Using with Rx.js Observables
