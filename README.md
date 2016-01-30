@@ -248,14 +248,16 @@ export default composeWithTracker(composer)(PostList);
 In addition to above, you can also return a cleanup function from the composer function. See following example:
 
 ```js
-const Time = ({time}) => (<div>Time is: {time}</div>);
+import {composeWithTracker} from 'react-komposer';
+import PostList from '../components/post_list.jsx';
+
 const composerFunction = (props, onData) => {
   // tracker related code
   return () => {console.log('Container disposed!');}
 };
 
 // Note the use of composeWithTracker
-const Clock = composeWithTracker(composerFunction)(Time);
+const Container = composeWithTracker(composerFunction)(PostList);
 ```
 
 For more information, refer this article: [Using Meteor Data and React with Meteor 1.3](https://voice.kadira.io/using-meteor-data-and-react-with-meteor-1-3-13cb0935dedb)
