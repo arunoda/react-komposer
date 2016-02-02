@@ -314,6 +314,7 @@ setInterval(() => {
 const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
 
 const onPropsChange = (props, onData) => {
+  onData(null, {time: store.getState().time});
   return store.subscribe(() => {
     const {time} = store.getState();
     onData(null, {time})
