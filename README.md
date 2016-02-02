@@ -176,7 +176,7 @@ For the above case, we've a utility called `composeAll` to make our life easier.
 
 ```js
 export default composeAll(
-  composeWithObservable(composerFn1)
+  composeWithObservable(composerFn1),
   composeWithTracker(composerFn2)
 )(Time)
 ```
