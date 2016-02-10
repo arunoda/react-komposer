@@ -1,5 +1,8 @@
 # ChangeLog
 
+### v1.3.1
+* Fix a small typo. See: [#28](https://github.com/kadirahq/react-komposer/pull/28)
+
 ### v1.3.0
 * Implement purity in containers. See: [#19](https://github.com/kadirahq/react-komposer/issues/19).
 
