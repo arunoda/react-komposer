@@ -82,7 +82,7 @@ function compose(fn, L1, E1) {
   var options = arguments.length <= 3 || arguments[3] === undefined ? { pure: true } : arguments[3];
 
   return function (ChildComponent, L2, E2) {
-    (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher oder container.');
+    (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher order container.');
 
     var LoadingComponent = L1 || L2 || DefaultLoadingComponent;
     var ErrorComponent = E1 || E2 || DefaultErrorComponent;
