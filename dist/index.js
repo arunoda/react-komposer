@@ -117,6 +117,7 @@ function compose(fn, L1, E1) {
       }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
+          this._mounted = false;
           this._unsubscribe();
         }
       }, {
