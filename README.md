@@ -225,7 +225,7 @@ const Clock = composeWithPromise(composerFunction)(Time, Loading);
 ReactDOM.render(<Clock />, document.getElementById('react-root'));
 ```
 
-See this live: <https://jsfiddle.net/arunoda/8wgeLexy/3/>
+See this live: <https://jsfiddle.net/arunoda/8wgeLexy/>
 
 ### Using with Meteor
 
@@ -284,7 +284,7 @@ const Clock = composeWithObservable(composerFunction)(Time);
 ReactDOM.render(<Clock />, document.getElementById('react-root'));
 ```
 
-Try this live: <https://jsfiddle.net/arunoda/Lsdekh4y/2/>
+Try this live: <https://jsfiddle.net/arunoda/Lsdekh4y/>
 
 ### Using with Redux
 
