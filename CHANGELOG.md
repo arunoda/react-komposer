@@ -1,5 +1,9 @@
 # ChangeLog
 
+### v1.3.3
+
+* Fix some issue with Meteor's Tracker integration. See [PR49](https://github.com/kadirahq/react-komposer/pull/49)
+
 ### v1.3.2
 
 * Update _mounted internal state when unmounting. See: [PR39](https://github.com/kadirahq/react-komposer/pull/39)
