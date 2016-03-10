@@ -145,7 +145,7 @@ ReactDOM.render((
 ), document.body);
 ```
 
-See this in live: <https://jsfiddle.net/arunoda/7qy1mxc7/2>
+See this in live: <https://jsfiddle.net/arunoda/7qy1mxc7/>
 
 ### Change the Loading Component
 
