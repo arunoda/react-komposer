@@ -3,13 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DefaultErrorComponent = DefaultErrorComponent;
-exports.DefaultLoadingComponent = DefaultLoadingComponent;
-exports.compose = compose;
-exports.composeWithTracker = composeWithTracker;
-exports.composeWithPromise = composeWithPromise;
-exports.composeWithObservable = composeWithObservable;
-exports.composeAll = composeAll;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -38,6 +31,14 @@ var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorRet
 var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
+
+exports.DefaultErrorComponent = DefaultErrorComponent;
+exports.DefaultLoadingComponent = DefaultLoadingComponent;
+exports.compose = compose;
+exports.composeWithTracker = composeWithTracker;
+exports.composeWithPromise = composeWithPromise;
+exports.composeWithObservable = composeWithObservable;
+exports.composeAll = composeAll;
 
 var _react = require('react');
 
@@ -87,7 +88,7 @@ function compose(fn, L1, E1) {
     var LoadingComponent = L1 || L2 || DefaultLoadingComponent;
     var ErrorComponent = E1 || E2 || DefaultErrorComponent;
 
-    var Container = (function (_React$Component) {
+    var Container = function (_React$Component) {
       (0, _inherits3.default)(Container, _React$Component);
 
       function Container(props, context) {
@@ -179,6 +180,7 @@ function compose(fn, L1, E1) {
           var _state$payload = this.state.payload;
           var payload = _state$payload === undefined ? {} : _state$payload;
 
+
           var props = (0, _extends3.default)({}, this.props, payload);
 
           return props;
@@ -199,7 +201,7 @@ function compose(fn, L1, E1) {
         }
       }]);
       return Container;
-    })(_react2.default.Component);
+    }(_react2.default.Component);
 
     var childDisplayName =
     // Get the display name if it's set.
@@ -216,9 +218,11 @@ function compose(fn, L1, E1) {
 
 function composeWithTracker(reactiveFn, L, E, options) {
   var onPropsChange = function onPropsChange(props, onData) {
-    var trackerCleanup = undefined;
-    var handler = Tracker.autorun(function () {
-      trackerCleanup = reactiveFn(props, onData);
+    var trackerCleanup = void 0;
+    var handler = Tracker.nonreactive(function () {
+      return Tracker.autorun(function () {
+        trackerCleanup = reactiveFn(props, onData);
+      });
     });
 
     return function () {
