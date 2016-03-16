@@ -1,5 +1,9 @@
 # ChangeLog
 
+### v1.4.0
+
+* Add support for React Native. See: [PR53](https://github.com/kadirahq/react-komposer/pull/53)
+
 ### v1.3.3
 
 * Fix some issue with Meteor's Tracker integration. See [PR49](https://github.com/kadirahq/react-komposer/pull/49)
