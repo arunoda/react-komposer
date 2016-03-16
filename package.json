@@ -18,7 +18,8 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch"
   },
-  "browser": ".dist/browser.js",
+  "browser": "./dist/browser.js",
+  "react-native": "./dist/index.js",
   "devDependencies": {
     "nodemon": "1.7.x",
     "mocha": "2.x.x",
