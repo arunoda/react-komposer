@@ -1,6 +1,12 @@
 # ChangeLog
 
+### v1.4.1
+16-March-2016
+
+* Remove browser flag completely where it might give us errors in Meteor.
+
 ### v1.4.0
+16-March-2016
 
 * Add support for React Native. See: [PR53](https://github.com/kadirahq/react-komposer/pull/53)
 
