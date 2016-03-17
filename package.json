@@ -44,7 +44,8 @@
     "rx": "4.x.x"
   },
   "peerDependencies": {
-    "react": "^0.14.3"
+    "react": "^0.14.3",
+    "react-native": "^0.21.0"
   },
   "dependencies": {
     "babel-runtime": "6.x.x",
