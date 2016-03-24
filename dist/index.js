@@ -3,13 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DefaultErrorComponent = DefaultErrorComponent;
-exports.DefaultLoadingComponent = DefaultLoadingComponent;
-exports.compose = compose;
-exports.composeWithTracker = composeWithTracker;
-exports.composeWithPromise = composeWithPromise;
-exports.composeWithObservable = composeWithObservable;
-exports.composeAll = composeAll;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -38,6 +31,14 @@ var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorRet
 var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
+
+exports.DefaultErrorComponent = DefaultErrorComponent;
+exports.DefaultLoadingComponent = DefaultLoadingComponent;
+exports.compose = compose;
+exports.composeWithTracker = composeWithTracker;
+exports.composeWithPromise = composeWithPromise;
+exports.composeWithObservable = composeWithObservable;
+exports.composeAll = composeAll;
 
 var _react = require('react');
 
@@ -79,7 +80,11 @@ function DefaultLoadingComponent() {
 }
 
 function compose(fn, L1, E1) {
-  var options = arguments.length <= 3 || arguments[3] === undefined ? { pure: true } : arguments[3];
+  var _ref2 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+  var _ref2$pure = _ref2.pure;
+  var pure = _ref2$pure === undefined ? true : _ref2$pure;
+  var contextTypes = _ref2.contextTypes;
 
   return function (ChildComponent, L2, E2) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher order container.');
@@ -87,7 +92,7 @@ function compose(fn, L1, E1) {
     var LoadingComponent = L1 || L2 || DefaultLoadingComponent;
     var ErrorComponent = E1 || E2 || DefaultErrorComponent;
 
-    var Container = (function (_React$Component) {
+    var Container = function (_React$Component) {
       (0, _inherits3.default)(Container, _React$Component);
 
       function Container(props, context) {
@@ -100,7 +105,7 @@ function compose(fn, L1, E1) {
         // XXX: In the server side environment, we need to
         // stop the subscription right away. Otherwise, it's a starting
         // point to huge subscription leak.
-        _this._subscribe(props);
+        _this._subscribe(props, context);
         return _this;
       }
 
@@ -111,8 +116,8 @@ function compose(fn, L1, E1) {
         }
       }, {
         key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(props) {
-          this._subscribe(props);
+        value: function componentWillReceiveProps(props, context) {
+          this._subscribe(props, context);
         }
       }, {
         key: 'componentWillUnmount',
@@ -122,12 +127,12 @@ function compose(fn, L1, E1) {
         }
       }, {
         key: 'shouldComponentUpdate',
-        value: function shouldComponentUpdate(nextProps, nextState) {
-          if (!options.pure) {
+        value: function shouldComponentUpdate(nextProps, nextState, nextContext) {
+          if (!pure) {
             return true;
           }
 
-          return !(0, _shallowequal2.default)(this.props, nextProps) || this.state.error !== nextState.error || !(0, _shallowequal2.default)(this.state.payload, nextState.payload);
+          return !(0, _shallowequal2.default)(this.props, nextProps) || !(0, _shallowequal2.default)(this.context, nextContext) || this.state.error !== nextState.error || !(0, _shallowequal2.default)(this.state.payload, nextState.payload);
         }
       }, {
         key: 'render',
@@ -140,19 +145,19 @@ function compose(fn, L1, E1) {
           }
 
           if (loading) {
-            return _react2.default.createElement(LoadingComponent, null);
+            return _react2.default.createElement(LoadingComponent, this._getProps());
           }
 
           return _react2.default.createElement(ChildComponent, this._getProps());
         }
       }, {
         key: '_subscribe',
-        value: function _subscribe(props) {
+        value: function _subscribe(props, context) {
           var _this2 = this;
 
           this._unsubscribe();
 
-          this._stop = fn(props, function (error, payload) {
+          var onData = function onData(error, payload) {
             if (error) {
               (0, _invariant2.default)(error.message && error.stack, 'Passed error should be an instance of an Error.');
             }
@@ -164,7 +169,9 @@ function compose(fn, L1, E1) {
             } else {
               _this2.state = state;
             }
-          });
+          };
+
+          this._stop = fn(props, onData, context);
         }
       }, {
         key: '_unsubscribe',
@@ -178,6 +185,7 @@ function compose(fn, L1, E1) {
         value: function _getProps() {
           var _state$payload = this.state.payload;
           var payload = _state$payload === undefined ? {} : _state$payload;
+
 
           var props = (0, _extends3.default)({}, this.props, payload);
 
@@ -199,7 +207,7 @@ function compose(fn, L1, E1) {
         }
       }]);
       return Container;
-    })(_react2.default.Component);
+    }(_react2.default.Component);
 
     var childDisplayName =
     // Get the display name if it's set.
@@ -210,15 +218,18 @@ function compose(fn, L1, E1) {
     'ChildComponent';
 
     Container.displayName = 'Container(' + childDisplayName + ')';
+    Container.contextTypes = contextTypes;
     return (0, _hoistNonReactStatics2.default)(Container, ChildComponent);
   };
 }
 
 function composeWithTracker(reactiveFn, L, E, options) {
-  var onPropsChange = function onPropsChange(props, onData) {
+  var onPropsChange = function onPropsChange(props, onData, context) {
     var trackerCleanup = undefined;
-    var handler = Tracker.autorun(function () {
-      trackerCleanup = reactiveFn(props, onData);
+    var handler = Tracker.nonreactive(function () {
+      return Tracker.autorun(function () {
+        trackerCleanup = reactiveFn(props, onData, context);
+      });
     });
 
     return function () {
@@ -233,8 +244,8 @@ function composeWithTracker(reactiveFn, L, E, options) {
 }
 
 function composeWithPromise(fn, L, E, options) {
-  var onPropsChange = function onPropsChange(props, onData) {
-    var promise = fn(props);
+  var onPropsChange = function onPropsChange(props, onData, context) {
+    var promise = fn(props, context);
     (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'Should return a promise from the callback of `composeWithPromise`');
 
     onData();
