@@ -20,7 +20,7 @@
   },
   "main": "dist/browser.js",
   "browser": "dist/browser.js",
-  "jsnext:main": "index.js",
+  "jsnext:main": "lib/index.js",
   "devDependencies": {
     "nodemon": "1.7.x",
     "mocha": "2.x.x",
