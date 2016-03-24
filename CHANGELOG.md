@@ -1,5 +1,19 @@
 # ChangeLog
 
+### v1.4.1
+16-March-2016
+
+* Remove browser flag completely where it might give us errors in Meteor.
+
+### v1.4.0
+16-March-2016
+
+* Add support for React Native. See: [PR53](https://github.com/kadirahq/react-komposer/pull/53)
+
+### v1.3.3
+
+* Fix some issue with Meteor's Tracker integration. See [PR49](https://github.com/kadirahq/react-komposer/pull/49)
+
 ### v1.3.2
 
 * Update _mounted internal state when unmounting. See: [PR39](https://github.com/kadirahq/react-komposer/pull/39)
