@@ -18,7 +18,9 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch"
   },
-  "browser": ".dist/browser.js",
+  "main": "dist/browser.js",
+  "browser": "dist/browser.js",
+  "jsnext:main": "index.js",
   "devDependencies": {
     "nodemon": "1.7.x",
     "mocha": "2.x.x",
