@@ -1,6 +1,6 @@
 {
-  "name": "react-komposer",
-  "version": "1.4.1",
+  "name": "react-komposer-fork",
+  "version": "1.3.7",
   "description": "Compose React containers and feed data into components.",
   "repository": {
     "type": "git",
@@ -18,6 +18,8 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch"
   },
+  "main": "./dist/index.js",
+  "browser": "./dist/index.js",
   "react-native": "./dist/index.js",
   "devDependencies": {
     "nodemon": "1.7.x",
