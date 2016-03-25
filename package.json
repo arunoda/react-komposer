@@ -18,9 +18,8 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch"
   },
-  "main": "dist/browser.js",
-  "browser": "dist/browser.js",
-  "jsnext:main": "lib/index.js",
+  "main": "./dist/index.js",
+  "browser": "./dist/index.js",
   "react-native": "./dist/index.js",
   "devDependencies": {
     "nodemon": "1.7.x",
