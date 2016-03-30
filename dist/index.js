@@ -71,15 +71,7 @@ var DummyComponent = exports.DummyComponent = function (_React$Component) {
   (0, _createClass3.default)(DummyComponent, [{
     key: 'render',
     value: function render() {
-      if ((0, _utils.isReactNative)()) {
-        var _require = require('react-native');
-
-        var Text = _require.Text;
-
-        return _react2.default.createElement(Text, null);
-      }
-
-      return _react2.default.createElement('noscript', null);
+      return null;
     }
   }]);
   return DummyComponent;
@@ -87,18 +79,6 @@ var DummyComponent = exports.DummyComponent = function (_React$Component) {
 
 function DefaultErrorComponent(_ref) {
   var error = _ref.error;
-
-  if ((0, _utils.isReactNative)()) {
-    var _require2 = require('react-native');
-
-    var Text = _require2.Text;
-
-    return _react2.default.createElement(
-      Text,
-      { style: { marginTop: 20, color: 'red' } },
-      error.message + ' \n' + error.stack
-    );
-  }
 
   return _react2.default.createElement(
     'pre',
@@ -111,18 +91,6 @@ function DefaultErrorComponent(_ref) {
 }
 
 function DefaultLoadingComponent() {
-  if ((0, _utils.isReactNative)()) {
-    var _require3 = require('react-native');
-
-    var Text = _require3.Text;
-
-    return _react2.default.createElement(
-      Text,
-      { style: { marginTop: 20 } },
-      'Loading...'
-    );
-  }
-
   return _react2.default.createElement(
     'p',
     null,
@@ -135,6 +103,12 @@ function compose(fn, L1, E1) {
 
   return function (ChildComponent, L2, E2) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher order container.');
+
+    if ((0, _utils.isReactNative)()) {
+      (0, _invariant2.default)(L1 || L2, 'Should provide a loading component in ReactNative.');
+
+      (0, _invariant2.default)(E1 || E2, 'Should provide a error handling component in ReactNative.');
+    }
 
     var LoadingComponent = L1 || L2 || DefaultLoadingComponent;
     var ErrorComponent = E1 || E2 || DefaultErrorComponent;
