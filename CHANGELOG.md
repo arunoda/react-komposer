@@ -1,5 +1,10 @@
 # ChangeLog
 
+### v1.5.0
+30-March-2016
+
+* Add loading components for ReactNative. See: [PR64](https://github.com/kadirahq/react-komposer/pull/64)
+
 ### v1.4.1
 16-March-2016
 
