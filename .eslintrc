@@ -12,6 +12,7 @@
 
   "globals": {
     "window": true,
+    "navigator": true,
     "Tracker": true
   },
 
