@@ -1,4 +1,8 @@
 # ChangeLog
+## v1.7.1
+30-March-2016
+
+* Remove react-native from peerDependencies.
 
 ### v1.7.0
 30-March-2016
