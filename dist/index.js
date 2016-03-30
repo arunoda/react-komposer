@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.DummyComponent = undefined;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -39,14 +40,11 @@ exports.composeWithTracker = composeWithTracker;
 exports.composeWithPromise = composeWithPromise;
 exports.composeWithObservable = composeWithObservable;
 exports.composeAll = composeAll;
+exports.disable = disable;
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
-
-var _hoistNonReactStatics = require('hoist-non-react-statics');
-
-var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
 var _invariant = require('invariant');
 
@@ -56,15 +54,44 @@ var _shallowequal = require('shallowequal');
 
 var _shallowequal2 = _interopRequireDefault(_shallowequal);
 
+var _utils = require('./utils');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var disableMode = false;
+
+var DummyComponent = exports.DummyComponent = function (_React$Component) {
+  (0, _inherits3.default)(DummyComponent, _React$Component);
+
+  function DummyComponent() {
+    (0, _classCallCheck3.default)(this, DummyComponent);
+    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(DummyComponent).apply(this, arguments));
+  }
+
+  (0, _createClass3.default)(DummyComponent, [{
+    key: 'render',
+    value: function render() {
+      if ((0, _utils.isReactNative)()) {
+        var _require = require('react-native');
+
+        var Text = _require.Text;
+
+        return _react2.default.createElement(Text, null);
+      }
+
+      return _react2.default.createElement('noscript', null);
+    }
+  }]);
+  return DummyComponent;
+}(_react2.default.Component);
 
 function DefaultErrorComponent(_ref) {
   var error = _ref.error;
 
-  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
-    var _require = require('react-native');
+  if ((0, _utils.isReactNative)()) {
+    var _require2 = require('react-native');
 
-    var Text = _require.Text;
+    var Text = _require2.Text;
 
     return _react2.default.createElement(
       Text,
@@ -84,10 +111,10 @@ function DefaultErrorComponent(_ref) {
 }
 
 function DefaultLoadingComponent() {
-  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
-    var _require2 = require('react-native');
+  if ((0, _utils.isReactNative)()) {
+    var _require3 = require('react-native');
 
-    var Text = _require2.Text;
+    var Text = _require3.Text;
 
     return _react2.default.createElement(
       Text,
@@ -112,21 +139,26 @@ function compose(fn, L1, E1) {
     var LoadingComponent = L1 || L2 || DefaultLoadingComponent;
     var ErrorComponent = E1 || E2 || DefaultErrorComponent;
 
-    var Container = function (_React$Component) {
-      (0, _inherits3.default)(Container, _React$Component);
+    // If this is disabled, we simply need to return the DummyComponent
+    if (disableMode) {
+      return (0, _utils.inheritStatics)(DummyComponent, ChildComponent);
+    }
+
+    var Container = function (_React$Component2) {
+      (0, _inherits3.default)(Container, _React$Component2);
 
       function Container(props, context) {
         (0, _classCallCheck3.default)(this, Container);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Container).call(this, props, context));
+        var _this2 = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Container).call(this, props, context));
 
-        _this.state = {};
+        _this2.state = {};
 
         // XXX: In the server side environment, we need to
         // stop the subscription right away. Otherwise, it's a starting
         // point to huge subscription leak.
-        _this._subscribe(props);
-        return _this;
+        _this2._subscribe(props);
+        return _this2;
       }
 
       (0, _createClass3.default)(Container, [{
@@ -173,7 +205,7 @@ function compose(fn, L1, E1) {
       }, {
         key: '_subscribe',
         value: function _subscribe(props) {
-          var _this2 = this;
+          var _this3 = this;
 
           this._unsubscribe();
 
@@ -184,10 +216,10 @@ function compose(fn, L1, E1) {
 
             var state = { error: error, payload: payload };
 
-            if (_this2._mounted) {
-              _this2.setState(state);
+            if (_this3._mounted) {
+              _this3.setState(state);
             } else {
-              _this2.state = state;
+              _this3.state = state;
             }
           });
         }
@@ -227,16 +259,7 @@ function compose(fn, L1, E1) {
       return Container;
     }(_react2.default.Component);
 
-    var childDisplayName =
-    // Get the display name if it's set.
-    ChildComponent.displayName ||
-    // Get the display name from the function name.
-    ChildComponent.name ||
-    // If not, just add a default one.
-    'ChildComponent';
-
-    Container.displayName = 'Container(' + childDisplayName + ')';
-    return (0, _hoistNonReactStatics2.default)(Container, ChildComponent);
+    return (0, _utils.inheritStatics)(Container, ChildComponent);
   };
 }
 
@@ -327,4 +350,13 @@ function composeAll() {
 
     return finalComponent;
   };
+}
+
+// A way to disable the functionality of react-komposer and always show the
+// loading component.
+// This is very useful in testing where we can ignore React kompser's behaviour.
+function disable() {
+  var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+  disableMode = value;
 }
