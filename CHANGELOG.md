@@ -1,4 +1,10 @@
 # ChangeLog
+
+## v1.7.2
+30-March-2016
+
+* Add disableMode support for composeAll.
+
 ## v1.7.1
 30-March-2016
 
@@ -7,7 +13,7 @@
 ### v1.7.0
 30-March-2016
 
-* Remove default loading and error components in ReactNative. User always needs to provide them. 
+* Remove default loading and error components in ReactNative. User always needs to provide them.
 * Earlier we conditionally require react-native and use it. But, it's not going to work with Webpack as it needs RN to be available inside the project.
 
 ### v1.6.0
