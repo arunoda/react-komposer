@@ -1,6 +1,7 @@
 # react-komposer
 
-Let's compose React containers and feed data into components.
+Let's compose React containers and feed data into components. <br>
+(supports ReactNative as well)
 
 ## TOC
 
@@ -192,6 +193,28 @@ If you need to turn this functionality you can turn it off like this:
 // instead of `compose`.
 const Clock = compose(onPropsChange, null, null, {pure: false})(Time);
 ```
+
+### Disable functionality
+
+Sometimes, when testing we may need to disable the functionality of React Komposer. If needed, we can do it like this:
+
+```js
+import { disable } from 'react-komposer';
+disable();
+```
+
+You need to do this, before composing any containers. After that, the composed container will render nothing.
+
+> This is pretty useful when used with [React Storybook](https://github.com/kadirahq/react-storybook).
+
+You can also revert this behaviour with:
+
+```js
+disable(false);
+```
+
+> Anyway, you need to create containers again.
+
 
 ## Using with XXX
 
