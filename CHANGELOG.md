@@ -1,5 +1,10 @@
 # ChangeLog
 
+### v1.6.0
+30-March-2016
+
+* Add a way to disable the functionality of React Komposer. See [more](https://github.com/kadirahq/react-komposer#disable-functionality).
+
 ### v1.5.0
 30-March-2016
 
