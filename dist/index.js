@@ -61,6 +61,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function DefaultErrorComponent(_ref) {
   var error = _ref.error;
 
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    var _require = require('react-native');
+
+    var Text = _require.Text;
+
+    return _react2.default.createElement(
+      Text,
+      { style: { marginTop: 20, color: 'red' } },
+      error.message + ' \n' + error.stack
+    );
+  }
+
   return _react2.default.createElement(
     'pre',
     { style: { color: 'red' } },
@@ -72,6 +84,18 @@ function DefaultErrorComponent(_ref) {
 }
 
 function DefaultLoadingComponent() {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    var _require2 = require('react-native');
+
+    var Text = _require2.Text;
+
+    return _react2.default.createElement(
+      Text,
+      { style: { marginTop: 20 } },
+      'Loading...'
+    );
+  }
+
   return _react2.default.createElement(
     'p',
     null,
