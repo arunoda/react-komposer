@@ -215,6 +215,25 @@ disable(false);
 
 > Anyway, you need to create containers again.
 
+### Test mode and composer override
+
+If you need to override composers for specific components during testing, you may activate test mode and set an override.
+
+```js
+import MyComponent from '../my_component.jsx';
+import { setTestMode, compose } from 'react-komposer';
+
+const stubComposer = (props, onData) => {
+  // get data
+  onData(null, data);
+};
+setTestMode(true);
+createStubComposers(MyComponent, compose(stubComposer));
+```
+
+Run this before the original composer for your component runs and it will cause stubComposer to override the composers for MyComponent.
+
+> This is useful when you want to test or display in isolation a component that includes other composed components.
 
 ## Using with XXX
 

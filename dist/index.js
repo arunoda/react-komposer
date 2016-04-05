@@ -41,6 +41,8 @@ exports.composeWithPromise = composeWithPromise;
 exports.composeWithObservable = composeWithObservable;
 exports.composeAll = composeAll;
 exports.disable = disable;
+exports.setTestMode = setTestMode;
+exports.createStubComposers = createStubComposers;
 
 var _react = require('react');
 
@@ -59,6 +61,9 @@ var _utils = require('./utils');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var disableMode = false;
+var testMode = false;
+
+var stubComposers = [];
 
 var DummyComponent = exports.DummyComponent = function (_React$Component) {
   (0, _inherits3.default)(DummyComponent, _React$Component);
@@ -309,6 +314,14 @@ function composeAll() {
       return DummyComponent;
     }
 
+    if (testMode) {
+      stubComposers.forEach(function (record) {
+        if (record.component === BaseComponent) {
+          composers = record.composers;
+        }
+      });
+    }
+
     if (BaseComponent === null || BaseComponent === undefined) {
       throw new Error('Curry function of composeAll needs an input.');
     }
@@ -337,4 +350,29 @@ function disable() {
   var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 
   disableMode = value;
+}
+
+// Enable test mode, which attempts to find a stub composer for components.
+function setTestMode() {
+  var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+  testMode = value;
+}
+
+// Override the composers for a given component in test mode
+function createStubComposers(component) {
+  for (var _len2 = arguments.length, composers = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    composers[_key2 - 1] = arguments[_key2];
+  }
+
+  var isNew = true;
+  stubComposers.forEach(function (record) {
+    if (record.component === component) {
+      record.composers = composers;
+      isNew = false;
+    }
+  });
+  if (isNew) {
+    stubComposers.push({ component: component, composers: composers });
+  }
 }
