@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.8.0
+09-April-2016
+
+* Add support to React 15.x.x
+
 ## v1.7.2
 30-March-2016
 
