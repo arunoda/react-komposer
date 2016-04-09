@@ -33,18 +33,18 @@
     "babel-preset-stage-2": "6.x.x",
     "babel-preset-react": "6.x.x",
     "babel-plugin-transform-runtime": "6.x.x",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-addons-test-utils": "^0.14.3",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0",
+    "react-addons-test-utils": "^15.0.0",
     "browserify": "12.x.x",
     "eslint-plugin-react": "3.x.x",
-    "enzyme": "1.x.x",
+    "enzyme": "^2.2.0",
     "uglifyify": "3.x.x",
     "exposify": "0.5.x",
     "rx": "4.x.x"
   },
   "peerDependencies": {
-    "react": "^0.14.3"
+    "react": "^0.14.3 || ^15.0.0"
   },
   "dependencies": {
     "babel-runtime": "6.x.x",
