@@ -40,7 +40,10 @@ exports.composeWithTracker = composeWithTracker;
 exports.composeWithPromise = composeWithPromise;
 exports.composeWithObservable = composeWithObservable;
 exports.composeAll = composeAll;
+exports.composeAllWithStub = composeAllWithStub;
 exports.disable = disable;
+exports.setTestMode = setTestMode;
+
 
 var _react = require('react');
 
@@ -59,6 +62,7 @@ var _utils = require('./utils');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var disableMode = false;
+var testMode = false;
 
 var DummyComponent = exports.DummyComponent = function (_React$Component) {
   (0, _inherits3.default)(DummyComponent, _React$Component);
@@ -330,6 +334,11 @@ function composeAll() {
   };
 }
 
+function composeAllWithStub(real, stub) {
+  var composers = (testMode && stub) ? stub : real;
+  return composeAll.apply(this, composers);
+}
+
 // A way to disable the functionality of react-komposer and always show the
 // loading component.
 // This is very useful in testing where we can ignore React kompser's behaviour.
@@ -337,4 +346,11 @@ function disable() {
   var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 
   disableMode = value;
+}
+
+// Enable test mode, which attempts to find a stub composer for components.
+function setTestMode() {
+  var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+  testMode = value;
 }
