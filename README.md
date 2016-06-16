@@ -215,6 +215,30 @@ disable(false);
 
 > Anyway, you need to create containers again.
 
+### Test mode and setting up composer override for unit testing with React Storybook
+
+React Storybook is not a Meteor application, so components created with composeWithTracker will not work properly. First, turn on test mode in config.js for React Storybook:
+```js
+setTestMode();
+```
+
+
+To set up a stub, use composeAllWithStub in your container definition:
+```js
+import { composeAllWithStub } from 'react-komposer';
+
+export default composeAllWithStub([
+  // regular composer
+  composeWithTracker(composer),
+  useDeps(depsMapper)
+],[
+  // composer stubs
+  compose(stubComposer),
+  useDeps(depsMapperStub)
+])(Component);
+```
+
+> This is useful when you want to test or display in isolation a component that includes other composed components.
 
 ## Using with XXX
 
