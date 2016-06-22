@@ -122,7 +122,7 @@ function compose(fn, L1, E1) {
           }
 
           if (loading) {
-            return _react2.default.createElement(LoadingComponent, null);
+            return _react2.default.createElement(LoadingComponent, this._getProps());
           }
 
           return _react2.default.createElement(ChildComponent, this._getProps());
