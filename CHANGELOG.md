@@ -1,7 +1,8 @@
 # ChangeLog
 
-## v.NEXT
+## v1.9.0
 
+* Add a way to provide a stubbed version of composer. See: [PR87](https://github.com/kadirahq/react-komposer/pull/87)
 * Refactor the code base for simplyness.
 * Pass props to the loading component. [PR47](https://github.com/kadirahq/react-komposer/pull/47)
 
