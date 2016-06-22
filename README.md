@@ -198,6 +198,18 @@ If you need to turn this functionality you can turn it off like this:
 const Clock = compose(onPropsChange, null, null, {pure: false})(Time);
 ```
 
+### Ref to base component
+
+In some situations you need to get a ref to base component you pass to `react-komposer`. You can enable a `ref` with the `withRef` option:
+
+```js
+// You can use `composeWithPromise` or any other compose APIs
+// instead of `compose`.
+const Clock = compose(onPropsChange, null, null, {withRef: true})(Time);
+```
+
+The base component will then be accessible with `getWrappedInstance()`.
+
 ### Disable functionality
 
 Sometimes, when testing we may need to disable the functionality of React Komposer. If needed, we can do it like this:
