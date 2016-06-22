@@ -155,6 +155,9 @@ const MyLoading = () => (<div>Hmm...</div>);
 const Clock = compose(onPropsChange, MyLoading)(Time);
 ```
 
+> This custom loading component receives all the props passed to the component as well.
+> So, based on that, you can change the behaviour of the loading component as well.
+
 ### Change the Error Component
 
 ```js
