@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v.NEXT
+
+* Refactor the code base for simplyness.
+* Pass props to the loading component. [PR47](https://github.com/kadirahq/react-komposer/pull/47)
+
 ## v1.8.0
 09-April-2016
 
