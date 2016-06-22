@@ -4,8 +4,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.composeWithObservable = exports.composeWithPromise = exports.composeWithTracker = exports.composeAll = exports.compose = undefined;
-exports.getDisableMode = getDisableMode;
 exports.disable = disable;
+exports.getDisableMode = getDisableMode;
+exports.setStubbingMode = setStubbingMode;
+exports.getStubbingMode = getStubbingMode;
+exports.setComposerStub = setComposerStub;
 
 var _compose2 = require('./compose');
 
@@ -29,11 +32,14 @@ var _with_observable2 = _interopRequireDefault(_with_observable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var disableMode = false;
+var compose = exports.compose = _compose3.default;
+var composeAll = exports.composeAll = _compose_all2.default;
+var composeWithTracker = exports.composeWithTracker = _with_tracker2.default;
+var composeWithPromise = exports.composeWithPromise = _with_promise2.default;
+var composeWithObservable = exports.composeWithObservable = _with_observable2.default;
 
-function getDisableMode() {
-  return disableMode;
-}
+var disableMode = false;
+var stubbingMode = false;
 
 // A way to disable the functionality of react-komposer and always show the
 // loading component.
@@ -44,8 +50,20 @@ function disable() {
   disableMode = value;
 }
 
-var compose = exports.compose = _compose3.default;
-var composeAll = exports.composeAll = _compose_all2.default;
-var composeWithTracker = exports.composeWithTracker = _with_tracker2.default;
-var composeWithPromise = exports.composeWithPromise = _with_promise2.default;
-var composeWithObservable = exports.composeWithObservable = _with_observable2.default;
+function getDisableMode() {
+  return disableMode;
+}
+
+function setStubbingMode() {
+  var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+  stubbingMode = value;
+}
+
+function getStubbingMode() {
+  return stubbingMode;
+}
+
+function setComposerStub(Container, composerStub) {
+  Container.__composerStub = composerStub;
+}

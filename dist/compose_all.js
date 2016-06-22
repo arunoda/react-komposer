@@ -5,9 +5,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = composeAll;
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var _ = require('./');
 
 var _common_components = require('./common_components');
+
+var _utils = require('./utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // utility function to compose multiple composers at once.
 function composeAll() {
@@ -24,19 +36,48 @@ function composeAll() {
       throw new Error('Curry function of composeAll needs an input.');
     }
 
-    var finalComponent = BaseComponent;
+    var FinalComponent = BaseComponent;
     composers.forEach(function (composer) {
       if (typeof composer !== 'function') {
         throw new Error('Composer should be a function.');
       }
 
-      finalComponent = composer(finalComponent);
+      FinalComponent = composer(FinalComponent);
 
-      if (finalComponent === null || finalComponent === undefined) {
+      if (FinalComponent === null || FinalComponent === undefined) {
         throw new Error('Composer function should return a value.');
       }
     });
 
-    return finalComponent;
+    FinalComponent.__OriginalBaseComponent = BaseComponent.__OriginalBaseComponent || BaseComponent;
+
+    var stubbingMode = (0, _.getStubbingMode)();
+
+    if (!stubbingMode) {
+      return FinalComponent;
+    }
+
+    // return the stubbing mode.
+    var ResultContainer = function ResultContainer(props) {
+      // If there's an stub use it.
+      if (ResultContainer.__composerStub) {
+        var data = ResultContainer.__composerStub(props);
+        var finalProps = (0, _extends3.default)({}, props, data);
+
+        return _react2.default.createElement(FinalComponent.__OriginalBaseComponent, finalProps);
+      }
+
+      // if there's no stub, just use the FinalComponent.
+      var displayName = FinalComponent.displayName || FinalComponent.name;
+      return _react2.default.createElement(
+        'span',
+        null,
+        '<' + displayName + ' />'
+      );
+    };
+
+    (0, _utils.inheritStatics)(ResultContainer, FinalComponent);
+
+    return ResultContainer;
   };
 }
