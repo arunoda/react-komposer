@@ -15,6 +15,7 @@ Let's compose React containers and feed data into components. <br>
     - [Using with Rx.js Observables](#using-with-rxjs-observables)
     - [Using with Redux](#using-with-redux)
 * [Extending](#extending)
+* [Stubbing](#stubbing)
 * [Caveats](#caveats)
 
 ## Why?
@@ -380,6 +381,52 @@ export default Clock;
 
 Remember to call `super` when overriding methods already defined in the container.
 
+## Stubbing
+
+It's very important to stub Containers used with `react-komposer` when we are doing isolated UI testing. (Specially with react-storybook). Here's how you can stub composers:
+
+**First of all, this is only work if you are using `composeAll` utility.**
+
+At the very beginning of your initial JS file, set the following code.
+
+```js
+import { setStubbingMode } from 'react-komposer';
+setStubbingMode(true);
+```
+
+> In react-storybook, that's the `.storybook/config.js` file.
+
+Then all your containers will look like this:
+
+![With no stub](docs/with-no-stub.png)
+
+If you need, you set a stub composer and pass data to the original component bypassing the actual composer function. You can do this, before using the component which has the container.
+
+```js
+import { setComposerStub } from 'react-komposer';
+import CommentList from '../comment_list';
+import CreateComment from '../../containers/create_comment';
+
+// Create the stub for the composer.
+setComposerStub(CreateComment, (props) => {
+  const data = {
+    ...props,
+    create: () => {},
+  };
+
+  return data;
+});
+```
+
+> In react-storybook you can do this when you are writing stories.
+
+Here, `CreateComment` container is using inside the `CommentList` container. We simply set a stubComposer, which returns some data. That data will be passed as props to the original component behind `CreateComment` container.
+
+This is how looks like after use the stub.
+
+![With stub](docs/with-stub.png)
+
+You can see a real example in the [Mantra's sample blog app](https://github.com/mantrajs/mantra-sample-blog-app).
 
 ## Caveats
 
