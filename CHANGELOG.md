@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.10.0
+
+* Updated compose to allow passing of context into the subscribe function. [PR46](https://github.com/kadirahq/react-komposer/pull/46)
+
 ## v1.9.0
 
 * Add a way to provide a stubbed version of composer. See: [PR87](https://github.com/kadirahq/react-komposer/pull/87)
