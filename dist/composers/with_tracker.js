@@ -12,11 +12,11 @@ var _compose2 = _interopRequireDefault(_compose);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function composeWithTracker(reactiveFn, L, E, options) {
-  var onPropsChange = function onPropsChange(props, onData) {
+  var onPropsChange = function onPropsChange(props, onData, context) {
     var trackerCleanup = undefined;
     var handler = Tracker.nonreactive(function () {
       return Tracker.autorun(function () {
-        trackerCleanup = reactiveFn(props, onData);
+        trackerCleanup = reactiveFn(props, onData, context);
       });
     });
 

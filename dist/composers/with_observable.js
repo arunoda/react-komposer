@@ -24,8 +24,8 @@ var _invariant2 = _interopRequireDefault(_invariant);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function composeWithObservable(fn, L, E, options) {
-  var onPropsChange = function onPropsChange(props, sendData) {
-    var observable = fn(props);
+  var onPropsChange = function onPropsChange(props, sendData, context) {
+    var observable = fn(props, context);
     (0, _invariant2.default)(typeof observable.subscribe === 'function', 'Should return an observable from the callback of `composeWithObservable`');
 
     sendData();

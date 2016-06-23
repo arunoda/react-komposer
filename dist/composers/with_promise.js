@@ -24,8 +24,8 @@ var _invariant2 = _interopRequireDefault(_invariant);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function composeWithPromise(fn, L, E, options) {
-  var onPropsChange = function onPropsChange(props, onData) {
-    var promise = fn(props);
+  var onPropsChange = function onPropsChange(props, onData, context) {
+    var promise = fn(props, context);
     (0, _invariant2.default)(typeof promise.then === 'function' && typeof promise.catch === 'function', 'Should return a promise from the callback of `composeWithPromise`');
 
     onData();

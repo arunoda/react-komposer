@@ -50,7 +50,11 @@ var _ = require('./');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function compose(fn, L1, E1) {
-  var options = arguments.length <= 3 || arguments[3] === undefined ? { pure: true } : arguments[3];
+  var _ref = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+  var _ref$pure = _ref.pure;
+  var pure = _ref$pure === undefined ? true : _ref$pure;
+  var contextTypes = _ref.contextTypes;
 
   return function (ChildComponent, L2, E2) {
     (0, _invariant2.default)(Boolean(ChildComponent), 'Should provide a child component to build the higher order container.');
@@ -82,7 +86,7 @@ function compose(fn, L1, E1) {
         // XXX: In the server side environment, we need to
         // stop the subscription right away. Otherwise, it's a starting
         // point to huge subscription leak.
-        _this._subscribe(props);
+        _this._subscribe(props, context);
         return _this;
       }
 
@@ -93,8 +97,8 @@ function compose(fn, L1, E1) {
         }
       }, {
         key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(props) {
-          this._subscribe(props);
+        value: function componentWillReceiveProps(props, context) {
+          this._subscribe(props, context);
         }
       }, {
         key: 'componentWillUnmount',
@@ -105,7 +109,7 @@ function compose(fn, L1, E1) {
       }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState) {
-          if (!options.pure) {
+          if (!pure) {
             return true;
           }
 
@@ -129,12 +133,12 @@ function compose(fn, L1, E1) {
         }
       }, {
         key: '_subscribe',
-        value: function _subscribe(props) {
+        value: function _subscribe(props, context) {
           var _this2 = this;
 
           this._unsubscribe();
 
-          this._stop = fn(props, function (error, payload) {
+          var onData = function onData(error, payload) {
             if (error) {
               (0, _invariant2.default)(error.message && error.stack, 'Passed error should be an instance of an Error.');
             }
@@ -146,7 +150,9 @@ function compose(fn, L1, E1) {
             } else {
               _this2.state = state;
             }
-          });
+          };
+
+          this._stop = fn(props, onData, context);
         }
       }, {
         key: '_unsubscribe',
@@ -183,6 +189,7 @@ function compose(fn, L1, E1) {
       return Container;
     })(_react2.default.Component);
 
+    Container.contextTypes = contextTypes;
     return (0, _utils.inheritStatics)(Container, ChildComponent);
   };
 }
