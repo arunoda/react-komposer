@@ -219,7 +219,7 @@ disable(false);
 
 > Anyway, you need to create containers again.
 
-## Change Default Components
+### Change Default Components
 
 It is possible to change default error and loading components globally. So, you don't need(if needed) to set default components in every composer call.
 
