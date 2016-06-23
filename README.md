@@ -219,6 +219,28 @@ disable(false);
 
 > Anyway, you need to create containers again.
 
+## Change Default Components
+
+It is possible to change default error and loading components globally. So, you don't need(if needed) to set default components in every composer call.
+
+Here's how do this:
+
+```js
+import {
+  setDefaultErrorComponent,
+  setDefaultLoadingComponent,
+} from 'react-komposer';
+
+const ErrorComponent = () => (<div>My Error</div>);
+const LoadingComponent = () => (<div>My Loading</div>);
+
+setDefaultErrorComponent(ErrorComponent);
+setDefaultLoadingComponent(LoadingComponent);
+```
+
+> This is very important if you are using this in a React Native app,
+> since, this project has no default components for React Native.
+> So, you can set default components like above at the very beginning.
 
 ## Using with XXX
 
