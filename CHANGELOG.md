@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.11.0
+
+* Add a way to set default loading and error components. See: [#8](https://github.com/kadirahq/react-komposer/issues/8).
+
 ## v1.10.0
 
 * Updated compose to allow passing of context into the subscribe function. [PR46](https://github.com/kadirahq/react-komposer/pull/46)

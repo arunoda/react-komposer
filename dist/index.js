@@ -9,6 +9,10 @@ exports.getDisableMode = getDisableMode;
 exports.setStubbingMode = setStubbingMode;
 exports.getStubbingMode = getStubbingMode;
 exports.setComposerStub = setComposerStub;
+exports.setDefaultLoadingComponent = setDefaultLoadingComponent;
+exports.setDefaultErrorComponent = setDefaultErrorComponent;
+exports._getDefaultLoadingComponent = _getDefaultLoadingComponent;
+exports._getDefaultErrorComponent = _getDefaultErrorComponent;
 
 var _compose2 = require('./compose');
 
@@ -30,6 +34,8 @@ var _with_observable = require('./composers/with_observable');
 
 var _with_observable2 = _interopRequireDefault(_with_observable);
 
+var _common_components = require('./common_components');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var compose = exports.compose = _compose3.default;
@@ -40,6 +46,8 @@ var composeWithObservable = exports.composeWithObservable = _with_observable2.de
 
 var disableMode = false;
 var stubbingMode = false;
+var defaultErrorComponent = null;
+var defaultLoadingComponent = null;
 
 // A way to disable the functionality of react-komposer and always show the
 // loading component.
@@ -54,6 +62,8 @@ function getDisableMode() {
   return disableMode;
 }
 
+// stubbing
+
 function setStubbingMode() {
   var value = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 
@@ -66,4 +76,21 @@ function getStubbingMode() {
 
 function setComposerStub(Container, composerStub) {
   Container.__composerStub = composerStub;
+}
+
+// default components
+function setDefaultLoadingComponent(comp) {
+  defaultLoadingComponent = comp;
+}
+
+function setDefaultErrorComponent(comp) {
+  defaultErrorComponent = comp;
+}
+
+function _getDefaultLoadingComponent() {
+  return defaultLoadingComponent || _common_components.DefaultLoadingComponent;
+}
+
+function _getDefaultErrorComponent() {
+  return defaultErrorComponent || _common_components.DefaultErrorComponent;
 }

@@ -65,8 +65,8 @@ function compose(fn, L1, E1) {
       (0, _invariant2.default)(E1 || E2, 'Should provide a error handling component in ReactNative.');
     }
 
-    var LoadingComponent = L1 || L2 || _common_components.DefaultLoadingComponent;
-    var ErrorComponent = E1 || E2 || _common_components.DefaultErrorComponent;
+    var LoadingComponent = L1 || L2 || (0, _._getDefaultLoadingComponent)();
+    var ErrorComponent = E1 || E2 || (0, _._getDefaultErrorComponent)();
 
     // If this is disabled, we simply need to return the DummyComponent
     if ((0, _.getDisableMode)()) {
