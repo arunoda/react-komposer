@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function composeWithTracker(reactiveFn, L, E, options) {
   var onPropsChange = function onPropsChange(props, onData, context) {
-    var trackerCleanup = undefined;
+    var trackerCleanup = void 0;
     var handler = Tracker.nonreactive(function () {
       return Tracker.autorun(function () {
         trackerCleanup = reactiveFn(props, onData, context);

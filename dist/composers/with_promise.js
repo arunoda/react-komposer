@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = composeWithPromise;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -12,6 +11,8 @@ var _extends3 = _interopRequireDefault(_extends2);
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = composeWithPromise;
 
 var _compose = require('../compose');
 

@@ -3,11 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = composeAll;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
+
+exports.default = composeAll;
 
 var _react = require('react');
 
