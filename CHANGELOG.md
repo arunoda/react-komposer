@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.12.0
+
+* Added [withRef](https://github.com/kadirahq/react-komposer#ref-to-base-component) option to expose the underline component. See [PR88](https://github.com/kadirahq/react-komposer/pull/88).
+* Remove disableMode from the docs since with the new stubbing functionality we don't need a disableMode.
+
 ## v1.11.0
 
 * Add a way to set default loading and error components. See: [#8](https://github.com/kadirahq/react-komposer/issues/8).
