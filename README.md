@@ -377,6 +377,25 @@ ReactDOM.render(<Clock />, document.getElementById('react'))
 
 Try this live: <https://jsfiddle.net/arunoda/wm6romh4/>
 
+### Using with MobX
+
+```js
+const store = mobx.observable({time: new Date().toString()});
+
+setInterval(() => store.time = new Date().toString(), 1000);
+
+const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
+
+onst onPropsChange = (props, onData) => {
+  const {time} = store;
+  onData(null, {time});
+};
+
+const Clock = composeWithMobx(onPropsChange)(Time);
+
+ReactDOM.render(<Clock />, document.getElementById('react'));
+```
+
 ## Extending
 
 Containers built by React Komposer are, still, technically just React components. It means that they can be extended in the same way you would extend any other component. Checkout following examples:
