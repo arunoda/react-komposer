@@ -70,7 +70,7 @@ const onPropsChange = (props, onData) => {
 
 In the above function, we get new data every second and send it via the `onData` callback. Additionally, we return a cleanup function from the function to cleanup its resources.
 
-Okay. Now it's time to create the clock:
+Okay. Now it's time to create the clock Container, wrapped around our Time UI Component, using our `onPropsChange` function:
 
 ```js
 import { compose } from 'react-komposer';
@@ -243,7 +243,7 @@ setDefaultLoadingComponent(LoadingComponent);
 
 ### Using with Promises
 
-For this, you can use the `composeWithPromise` instead of `compose`.
+For use with Promise-based data sources, you can use `composeWithPromise` instead of `compose`.
 
 ```js
 import {composeWithPromise} from 'react-komposer'
