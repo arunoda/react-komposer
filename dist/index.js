@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.composeWithObservable = exports.composeWithPromise = exports.composeWithTracker = exports.composeAll = exports.compose = undefined;
+exports.composeWithMobx = exports.composeWithObservable = exports.composeWithPromise = exports.composeWithTracker = exports.composeAll = exports.compose = undefined;
 exports.disable = disable;
 exports.getDisableMode = getDisableMode;
 exports.setStubbingMode = setStubbingMode;
@@ -34,6 +34,10 @@ var _with_observable = require('./composers/with_observable');
 
 var _with_observable2 = _interopRequireDefault(_with_observable);
 
+var _with_mobx = require('./composers/with_mobx');
+
+var _with_mobx2 = _interopRequireDefault(_with_mobx);
+
 var _common_components = require('./common_components');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -43,6 +47,7 @@ var composeAll = exports.composeAll = _compose_all2.default;
 var composeWithTracker = exports.composeWithTracker = _with_tracker2.default;
 var composeWithPromise = exports.composeWithPromise = _with_promise2.default;
 var composeWithObservable = exports.composeWithObservable = _with_observable2.default;
+var composeWithMobx = exports.composeWithMobx = _with_mobx2.default;
 
 var disableMode = false;
 var stubbingMode = false;
