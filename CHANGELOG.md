@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.13.0
+
+* Add support for MobX. See: [PR101](https://github.com/kadirahq/react-komposer/pull/101)
+
 ## v1.12.0
 
 * Added [withRef](https://github.com/kadirahq/react-komposer#ref-to-base-component) option to expose the underline component. See [PR88](https://github.com/kadirahq/react-komposer/pull/88).
