@@ -1,6 +1,6 @@
 {
   "name": "react-komposer",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "description": "Compose React containers and feed data into components.",
   "repository": {
     "type": "git",
