@@ -20,22 +20,25 @@ Let's compose React containers and feed data into components. <br>
 
 ## Why?
 
-Lately, in React we tried to avoid states as possible we can and use props to pass data and actions. So, we call these components **Dumb Components** or **UI components.**
+Lately, in React we try to avoid the use of component state as much as possible and use props to handle the passing of data and actions.
+We call these stateless components **Dumb Components** or **UI Components.**
 
-And there is another layer of components, which knows how to **fetch data**. We call them as **Containers**. Containers usually do things like this:
+There is another component layer on-top of these **Dumb Components** which handles the **data fetching** logic. We call these components **Containers**. Containers usually do things like:
 
 * Request for data (invoke a subscription or just fetch it).
 * Show a loading screen while the data is fetching.
-* Once data arrives, pass it to the UI component.
+* Once data arrives, pass it to the UI Component.
 * If there is an error, show it to the user.
-* It may need to refetch or re-subscribe when props changed.
+* It may need to re-fetch or re-subscribe when props change.
 * It needs to cleanup resources (like subscriptions) when the container is unmounting.
 
-If you want to do these your self, you have to do a lot of **repetitive tasks**. And this is good place for **human errors**.
+If you want to do these yourself, you have to do a lot of **repetitive tasks**. This commonly leads to **human errors**.
 
 **Meet React Komposer**
 
-That's what we are going to fix with this project. You simply tell it how to get data and clean up resources. Then it'll do the hard work you. This is a universal project and work with **any kind of data source**, whether it's based Promises, Rx.JS observables or even Meteor's Tracker.
+That's what we are going to fix with this project. You simply tell it how to get data and clean up resources, then it'll
+do the hard work for you. This is a universal project and works with **any kind of data source**, whether it's based on
+Promises, Rx.JS observables, a Redux store or even Meteor's Tracker.
 
 ## Installation
 
@@ -45,7 +48,7 @@ npm i --save react-komposer
 
 ## Basic Usage
 
-Let's say we need to build a clock. First let's create a component to show the time.
+Let's say we need to build a clock. First let's create a UI Component to show the time.
 
 ```js
 const Time = ({time}) => (<div>Time is: {time}</div>);
@@ -65,9 +68,9 @@ const onPropsChange = (props, onData) => {
 };
 ```
 
-On the above function, we get data for every seconds and send it via `onData`. Additionally, we return a cleanup function from the function to cleanup it's resources.
+In the above function, we get new data every second and send it via the `onData` callback. Additionally, we return a cleanup function from the function to cleanup its resources.
 
-Okay. Now it's time to create the clock:
+Okay. Now it's time to create the clock Container, wrapped around our Time UI Component, using our `onPropsChange` function:
 
 ```js
 import { compose } from 'react-komposer';
@@ -81,13 +84,13 @@ import ReactDOM from 'react-dom';
 ReactDOM.render(<Clock />, document.body);
 ```
 
-See this in live: <https://jsfiddle.net/arunoda/jxse2yw8>
+See this live: <https://jsfiddle.net/arunoda/jxse2yw8>
 
 ### Additional Benefits
 
-Other than main benefits, now it's super easy to test our UI code. We can easily do it via a set of unit tests.
+Other than the main benefits, now it's super easy to test our UI code. We can easily do it via a set of unit tests.
 
-* For that UI, simply test the plain react component. In this case, `Time` (You can use [enzyme](https://github.com/airbnb/enzyme) for that).
+* For the UI Components, simply test the plain React component. In this case, `Time` (you can use [enzyme](https://github.com/airbnb/enzyme)).
 * Then test `onPropsChange` for different scenarios.
 
 ## API
@@ -96,7 +99,7 @@ You can customize the higher order component created by `compose` in few ways. L
 
 ### Handling Errors
 
-Rather than showing the data, something you need to deal with error. Here's how to use `compose` for that:
+Rather than showing the data, sometimes you need to deal with errors. Here's how to use `compose` for that:
 
 ```js
 const onPropsChange = (props, onData) => {
@@ -105,9 +108,10 @@ const onPropsChange = (props, onData) => {
 };
 ```
 
-Then error will be rendered to the screen (in the place where component is rendered). You must provide a JavaScript error object.
+The error will be rendered to the screen (in place of where the component is rendered).
+You must provide a [JavaScript Error object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Error).
 
-You can clear it by passing a some data again like this:
+You can clear it by passing some data again like this:
 
 ```js
 const onPropsChange = (props, onData) => {
@@ -122,7 +126,7 @@ const onPropsChange = (props, onData) => {
 
 ### Detect props changes
 
-Some times can use the props to custom our data fetching logic. Here's how to do it.
+Sometimes you can use the props to customize our data fetching logic. Here's how to do it:
 
 ```js
 const onPropsChange = (props, onData) => {
@@ -136,7 +140,7 @@ const onPropsChange = (props, onData) => {
 };
 ```
 
-Here we are asking to make the Clock to display timestamp instead of a the Date string. See:
+Here we are asking to make the Clock to display timestamp instead of the Date string. See:
 
 ```js
 ReactDOM.render((
@@ -147,7 +151,7 @@ ReactDOM.render((
 ), document.body);
 ```
 
-See this in live: <https://jsfiddle.net/arunoda/7qy1mxc7/>
+See this live: <https://jsfiddle.net/arunoda/7qy1mxc7/>
 
 ### Change the Loading Component
 
@@ -156,8 +160,8 @@ const MyLoading = () => (<div>Hmm...</div>);
 const Clock = compose(onPropsChange, MyLoading)(Time);
 ```
 
-> This custom loading component receives all the props passed to the component as well.
-> So, based on that, you can change the behaviour of the loading component as well.
+> This custom loading component receives all the props passed to the UI Component as well.
+> So, based on those props, you can change the behaviour of the loading component also.
 
 ### Change the Error Component
 
@@ -168,7 +172,7 @@ const Clock = compose(onPropsChange, null, MyError)(Time);
 
 ### Compose Multiple Containers
 
-Sometimes, we need to compose multiple containers at once, in order to use different data sources. Checkout following examples:
+Sometimes we need to compose multiple containers at once, in order to use different data sources. Checkout the following examples:
 
 ```js
 const Clock = composeWithObservable(composerFn1)(Time);
@@ -177,7 +181,7 @@ const MeteorClock = composeWithTracker(composerFn2)(Clock);
 export default MeteorClock;
 ```
 
-For the above case, we've a utility called `composeAll` to make our life easier. See how to use it:
+For the above case, we've a utility called `composeAll` to make our life easier. To use it:
 
 ```js
 export default composeAll(
@@ -188,9 +192,10 @@ export default composeAll(
 
 ### Pure Containers
 
-`react-komposer` checks the purity of payload, error and props and avoid unnecessary render function calls. That means we've implemented `shouldComponentUpdate` lifecycle hook and follows something similar to React's [shallowCompare](https://facebook.github.io/react/docs/shallow-compare.html).
+`react-komposer` checks the purity of payload, error and props, avoiding unnecessary render function calls. That means
+we've implemented the `shouldComponentUpdate` lifecycle method, which follows something similar to React's [shallowCompare](https://facebook.github.io/react/docs/shallow-compare.html).
 
-If you need to turn this functionality you can turn it off like this:
+If you need to turn off this functionality, you can do it like this:
 
 ```js
 // You can use `composeWithPromise` or any other compose APIs
@@ -200,7 +205,7 @@ const Clock = compose(onPropsChange, null, null, {pure: false})(Time);
 
 ### Ref to base component
 
-In some situations you need to get a ref to base component you pass to `react-komposer`. You can enable a `ref` with the `withRef` option:
+In some situations, you need to get a ref to the base component that you pass to `react-komposer`. You can enable a `ref` with the `withRef` option:
 
 ```js
 // You can use `composeWithPromise` or any other compose APIs
@@ -213,9 +218,9 @@ Checkout this [test case](https://github.com/kadirahq/react-komposer/blob/master
 
 ### Change Default Components
 
-It is possible to change default error and loading components globally. So, you don't need(if needed) to set default components in every composer call.
+It is possible to change default error and loading components globally, so you don't need to set default components in every composer call.
 
-Here's how do this:
+Here's how do it:
 
 ```js
 import {
@@ -231,14 +236,14 @@ setDefaultLoadingComponent(LoadingComponent);
 ```
 
 > This is very important if you are using this in a React Native app,
-> since, this project has no default components for React Native.
-> So, you can set default components like above at the very beginning.
+> as this project has no default components for React Native.
+> So you can set default components, as shown above, at the very beginning.
 
 ## Using with XXX
 
 ### Using with Promises
 
-For this, you can use the `composeWithPromise` instead of `compose`.
+For use with Promise-based data sources, you can use `composeWithPromise` instead of `compose`.
 
 ```js
 import {composeWithPromise} from 'react-komposer'
@@ -270,7 +275,7 @@ See this live: <https://jsfiddle.net/arunoda/8wgeLexy/>
 
 ### Using with Meteor
 
-For that you need to use `composeWithTracker` method instead of `compose`. Then you can watch any Reactive data inside that.
+For use with Meteor, you need to use `composeWithTracker` instead of `compose`, from where you can watch any Reactive data.
 
 ```js
 import {composeWithTracker} from 'react-komposer';
@@ -286,7 +291,7 @@ function composer(props, onData) {
 export default composeWithTracker(composer)(PostList);
 ```
 
-In addition to above, you can also return a cleanup function from the composer function. See following example:
+In addition to above, you can also return a cleanup function from the composer function. See the following example:
 
 ```js
 import {composeWithTracker} from 'react-komposer';
@@ -371,7 +376,8 @@ Try this live: <https://jsfiddle.net/arunoda/wm6romh4/>
 
 ## Extending
 
-Containers built by React Komposer are, still, technically just React components. It means that they can be extended in the same way you would extend any other component. Checkout following examples:
+Containers built by React Komposer are still React components. This means that they can be extended in the same way
+you would extend any other component. This is demonstrated in the following example:
 
 
 ```js
@@ -393,28 +399,30 @@ Clock.displayName = 'ClockContainer';
 export default Clock;
 ```
 
-Remember to call `super` when overriding methods already defined in the container.
+Remember to call `super` when overriding methods already defined in the Container.
 
 ## Stubbing
 
-It's very important to stub Containers used with `react-komposer` when we are doing isolated UI testing. (Specially with react-storybook). Here's how you can stub composers:
+It's very important to stub Containers used with `react-komposer` when we are doing isolated UI testing (especially with
+[react-storybook](https://github.com/kadirahq/react-storybook)). Here's how you can stub composers:
 
-**First of all, this is only work if you are using `composeAll` utility.**
+**First of all, this only works if you are using the `composeAll` utility function.**
 
-At the very beginning of your initial JS file, set the following code.
+At the very beginning of your initial JS file, set the following code:
 
 ```js
 import { setStubbingMode } from 'react-komposer';
 setStubbingMode(true);
 ```
 
-> In react-storybook, that's the `.storybook/config.js` file.
+> In react-storybook, that's in the `.storybook/config.js` file.
 
 Then all your containers will look like this:
 
 ![With no stub](docs/with-no-stub.png)
 
-If you need, you set a stub composer and pass data to the original component bypassing the actual composer function. You can do this, before using the component which has the container.
+If you need, you can set a stub composer and pass data to the original component, bypassing the actual composer function.
+You can do this, before using the component which has the Container.
 
 ```js
 import { setComposerStub } from 'react-komposer';
@@ -432,22 +440,25 @@ setComposerStub(CreateComment, (props) => {
 });
 ```
 
-> In react-storybook you can do this when you are writing stories.
+> In react-storybook, you can do this when you are writing stories.
 
-Here, `CreateComment` container is using inside the `CommentList` container. We simply set a stubComposer, which returns some data. That data will be passed as props to the original component behind `CreateComment` container.
+Here, the `CreateComment` container is being used inside the `CommentList` Container. We simply set a stubComposer,
+which returns some data. That data will be passed as props to the original UI Component, wrapped by the `CreateComment` Container.
 
-This is how looks like after use the stub.
+This is how it looks after using the stub:
 
 ![With stub](docs/with-stub.png)
 
-You can see a real example in the [Mantra's sample blog app](https://github.com/mantrajs/mantra-sample-blog-app).
+You can see a real example in the [Mantra sample blog app](https://github.com/mantrajs/mantra-sample-blog-app).
 
 ## Caveats
 
 **SSR**
 
-In the server, we won't be able to cleanup resources even if you return the cleanup function. That's because, there is no functionality to detect component unmount in the server. So, make sure to handle the cleanup logic by yourself in the **server**.
+On the server, we won't be able to cleanup resources even if you return the cleanup function. That's because there is no
+functionality to detect component unmount on the server. So make sure to handle the cleanup logic by yourself, in this case.
 
-**Composer Rerun on any prop change**
+**Composer re-run on any prop change**
 
-Right now, composer function is running again for any prop change. We can fix this by watching props and decide which prop has been changed. See: [#4](https://github.com/kadirahq/react-komposer/issues/4)
+Right now, the composer function will run again for any prop change. We can fix this by watching props and deciding which
+prop has been changed. See [#4](https://github.com/kadirahq/react-komposer/issues/4).
