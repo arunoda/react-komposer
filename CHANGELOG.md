@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.13.1
+
+* Make mobx a dependency. Fix issue: [#103](https://github.com/kadirahq/react-komposer/issues/103)
+
 ## v1.13.0
 
 * Add support for MobX. See: [PR101](https://github.com/kadirahq/react-komposer/pull/101)
