@@ -42,8 +42,7 @@
     "react-addons-test-utils": "^15.0.0",
     "react-dom": "^15.0.0",
     "rx": "4.x.x",
-    "uglifyify": "3.x.x",
-    "mobx": "^2.3.4"
+    "uglifyify": "3.x.x"
   },
   "peerDependencies": {
     "react": "^0.14.3 || ^15.0.0"
@@ -52,6 +51,7 @@
     "babel-runtime": "6.x.x",
     "hoist-non-react-statics": "1.x.x",
     "invariant": "2.x.x",
-    "shallowequal": "0.2.x"
+    "shallowequal": "0.2.x",
+    "mobx": "^2.3.4"
   }
 }
