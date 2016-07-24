@@ -203,6 +203,24 @@ If you need to turn off this functionality, you can do it like this:
 const Clock = compose(onPropsChange, null, null, {pure: false})(Time);
 ```
 
+### Stop unnecessary calls to your function
+
+If your onPropsChange function performs an expensive operation (such as making a server call) you can avoid repeated
+function calls by passing `shouldResubscribe`.
+ 
+Calculate the change in props or context that affect your function like this:
+
+```js
+// You can use `composeWithPromise` or any other compose APIs
+// instead of `compose`.
+const differentDoc = (currentProps, nextProps, currentContext, nextContext) =>
+  currentProps.doc.id !== nextProps.doc.id;
+const Clock = compose(onPropsChange, null, null, {shouldResubscribe: differentDoc})(Time);
+```
+
+If `shouldResubscribe` is not a function, then it is treated as truthy. So if you always want to resubscribe, or never 
+want to resubscribe then, then just pass `true` / `false`.  
+
 ### Ref to base component
 
 In some situations, you need to get a ref to the base component that you pass to `react-komposer`. You can enable a `ref` with the `withRef` option:

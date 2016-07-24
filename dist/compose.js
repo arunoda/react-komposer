@@ -56,6 +56,7 @@ function compose(fn, L1, E1) {
   var contextTypes = _ref.contextTypes;
   var _ref$pure = _ref.pure;
   var pure = _ref$pure === undefined ? true : _ref$pure;
+  var shouldResubscribe = _ref.shouldResubscribe;
   var _ref$withRef = _ref.withRef;
   var withRef = _ref$withRef === undefined ? false : _ref$withRef;
 
@@ -103,7 +104,9 @@ function compose(fn, L1, E1) {
       }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(props, context) {
-          this._subscribe(props, context);
+          if (this._shouldResubscribe(props, context)) {
+            this._subscribe(props, context);
+          }
         }
       }, {
         key: 'componentWillUnmount',
@@ -171,6 +174,19 @@ function compose(fn, L1, E1) {
           if (this._stop) {
             this._stop();
           }
+        }
+      }, {
+        key: '_shouldResubscribe',
+        value: function _shouldResubscribe(nextProps, nextContext) {
+          if (typeof shouldResubscribe === 'undefined') {
+            if (!pure) {
+              return true;
+            }
+            return !(0, _shallowequal2.default)(this.props, nextProps) || !(0, _shallowequal2.default)(this.context, nextContext);
+          } else if (typeof shouldResubscribe === 'function') {
+            return shouldResubscribe(this.props, nextProps, this.context, nextContext);
+          }
+          return Boolean(shouldResubscribe);
         }
       }, {
         key: '_getProps',
