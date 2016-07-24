@@ -383,7 +383,7 @@ setInterval(() => store.time = new Date().toString(), 1000);
 
 const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
 
-onst onPropsChange = (props, onData) => {
+const onPropsChange = (props, onData) => {
   const {time} = store;
   onData(null, {time});
 };
