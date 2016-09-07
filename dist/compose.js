@@ -68,9 +68,6 @@ function compose(fn, L1, E1) {
       (0, _invariant2.default)(E1 || E2, 'Should provide a error handling component in ReactNative.');
     }
 
-    var LoadingComponent = L1 || L2 || (0, _._getDefaultLoadingComponent)();
-    var ErrorComponent = E1 || E2 || (0, _._getDefaultErrorComponent)();
-
     // If this is disabled, we simply need to return the DummyComponent
     if ((0, _.getDisableMode)()) {
       return (0, _utils.inheritStatics)(_common_components.DummyComponent, ChildComponent);
@@ -82,7 +79,7 @@ function compose(fn, L1, E1) {
       function Container(props, context) {
         (0, _classCallCheck3.default)(this, Container);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Container).call(this, props, context));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Container.__proto__ || (0, _getPrototypeOf2.default)(Container)).call(this, props, context));
 
         _this.getWrappedInstance = _this.getWrappedInstance.bind(_this);
 
@@ -131,6 +128,8 @@ function compose(fn, L1, E1) {
         value: function render() {
           var error = this._getError();
           var loading = this._isLoading();
+          var LoadingComponent = L1 || L2 || (0, _._getDefaultLoadingComponent)();
+          var ErrorComponent = E1 || E2 || (0, _._getDefaultErrorComponent)();
 
           if (error) {
             return _react2.default.createElement(ErrorComponent, { error: error });

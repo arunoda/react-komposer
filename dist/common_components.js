@@ -39,7 +39,7 @@ var DummyComponent = exports.DummyComponent = function (_React$Component) {
 
   function DummyComponent() {
     (0, _classCallCheck3.default)(this, DummyComponent);
-    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(DummyComponent).apply(this, arguments));
+    return (0, _possibleConstructorReturn3.default)(this, (DummyComponent.__proto__ || (0, _getPrototypeOf2.default)(DummyComponent)).apply(this, arguments));
   }
 
   (0, _createClass3.default)(DummyComponent, [{
