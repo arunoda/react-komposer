@@ -132,4 +132,148 @@ describe('genericComposer', () => {
       expect(run).to.throw(/Tyring set data after/);
     });
   });
+
+  describe('performance', () => {
+    describe('with propsToWatch === []', () => {
+      describe('dataLoader', () => {
+        it('should run for the first time', () => {
+          const options = {
+            propsToWatch: [],
+          };
+          const Container = genericComposer((props, onData) => {
+            onData(null, { name: 'arunoda' });
+          }, options)(Comp);
+          const el = shallow(<Container />);
+          expect(el.html()).to.match(/arunoda/);
+        });
+
+        it('should not run again', () => {
+          const options = {
+            propsToWatch: [],
+          };
+
+          let callCount = 0;
+          const Container = genericComposer((props, _onData) => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container />);
+          el.instance()._subscribe({ aa: 10 });
+
+          expect(callCount).to.be.equal(1);
+        });
+      });
+    });
+
+    describe('with propsToWatch == [some props]', () => {
+      describe('dataLoader', () => {
+        it('should not run if the watching props are the same', () => {
+          const options = {
+            propsToWatch: ['name'],
+          };
+
+          let callCount = 0;
+          const Container = genericComposer((props, _onData) => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name='arunoda'/>);
+          el.instance()._subscribe({ name:'arunoda', age: 20 });
+
+          expect(callCount).to.be.equal(1);
+        });
+
+        it('should not run if the watching props changed', () => {
+          const options = {
+            propsToWatch: ['name'],
+          };
+
+          let callCount = 0;
+          const Container = genericComposer((props, _onData) => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name='arunoda'/>);
+          el.instance()._subscribe({ name:'kamal', age: 20 });
+
+          expect(callCount).to.be.equal(2);
+        });
+
+        it('should do a shallow comparison', () => {
+          const options = {
+            propsToWatch: ['data'],
+          };
+
+          const data = {};
+          let callCount = 0;
+          const Container = genericComposer((props, _onData) => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container data={data}/>);
+
+          // let's change the stuff inside the data
+          data.foo = 100;
+
+          el.instance()._subscribe({ data });
+
+          expect(callCount).to.be.equal(1);
+        });
+
+        it('should watch multiple props', () => {
+          const options = {
+            propsToWatch: ['name', 'age'],
+          };
+
+          const data = {};
+          let callCount = 0;
+          const Container = genericComposer((props, _onData) => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name="arunoda" age={20} />);
+
+          // first run with same props
+          el.instance()._subscribe({ name: 'arunoda', age: 20, kkr: 20 });
+          expect(callCount).to.be.equal(1);
+
+          // second run with changed props
+          el.instance()._subscribe({ name: 'arunoda', age: 30 });
+          expect(callCount).to.be.equal(2);
+        })
+      });
+    });
+
+    describe('with shouldSubscribe', () => {
+      describe('dataLoader', () => {
+        it('should run for the first time even shouldSubscribe give false', () => {
+          const options = {
+            shouldSubscribe: () => false,
+          };
+          const Container = genericComposer((props, onData) => {
+            onData(null, { name: 'arunoda' });
+          }, options)(Comp);
+          const el = shallow(<Container />);
+          expect(el.html()).to.match(/arunoda/);
+        });
+
+        it('should ignore propsToWatch', () => {
+          const options = {
+            shouldSubscribe: () => true,
+            propsToWatch: [],
+          };
+
+          let callCount = 0;
+          const Container = genericComposer((props, _onData) => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container />);
+          el.instance()._subscribe({ aa: 10 });
+
+          expect(callCount).to.be.equal(2);
+        });
+      })
+    })
+  });
 });

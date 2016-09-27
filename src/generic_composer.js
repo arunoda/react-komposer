@@ -47,14 +47,13 @@ export default function genericComposer(dataLoader, options = {}) {
       }
 
       _shouldSubscribe(props, firstRun) {
-        if (firstRun) return true;
-
         const nextProps = pick(props, propsToWatch);
         const currentProps = this._cachedWatchingProps || {};
         this._cachedWatchingProps = nextProps;
 
+        if (firstRun) return true;
         if (typeof shouldSubscribe === 'function') {
-          return !shouldSubscribe(currentProps, nextProps);
+          return shouldSubscribe(currentProps, nextProps);
         }
 
         if (propsToWatch === null) return true;
