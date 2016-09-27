@@ -1,14 +1,24 @@
 /* eslint import/prefer-default-export: 0 */
+import _compose from './compose';
 
-import genericComposer from './generic_composer';
+export const compose = _compose;
 
-export function makeComposer(mainOptions = {}) {
+export function setDefaults(mainOptions = {}) {
   return function (dataLoader, otherOptions = {}) {
     const options = {
       ...mainOptions,
       ...otherOptions,
     };
 
-    return genericComposer(dataLoader, options);
+    return _compose(dataLoader, options);
+  };
+}
+
+export function merge(...enhancers) {
+  // TODO: Try to get a single HOC merging all the composers together
+  return function (Child) {
+    return enhancers.reduce((C, enhancer) => {
+      return enhancer(C);
+    }, Child);
   };
 }

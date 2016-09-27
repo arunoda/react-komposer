@@ -3,7 +3,7 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
-import genericComposer from '../generic_composer';
+import compose from '../compose';
 
 const { describe, it } = global;
 class Comp extends React.Component {
@@ -12,10 +12,10 @@ class Comp extends React.Component {
   }
 }
 
-describe('genericComposer', () => {
+describe('compose', () => {
   describe('basic features', () => {
     it('should pass props to the Child', () => {
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData(null, {});
       })(Comp);
       const el = shallow(<Container name="arunoda" />);
@@ -23,7 +23,7 @@ describe('genericComposer', () => {
     });
 
     it('should pass data to the Child', () => {
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData(null, { name: 'arunoda' });
       })(Comp);
       const el = shallow(<Container />);
@@ -31,7 +31,7 @@ describe('genericComposer', () => {
     });
 
     it('should pass both data and props to the Child', () => {
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData(null, { name: 'arunoda' });
       })(({ name, age }) => (<p>{name}={age}</p>));
 
@@ -42,7 +42,7 @@ describe('genericComposer', () => {
     it('should run with the env', (done) => {
       const env = { name: 'arunoda' };
       const options = { env };
-      const Container = genericComposer((props, onData, context) => {
+      const Container = compose((props, onData, context) => {
         expect(context.name).to.be.equal('arunoda');
         done();
       }, options)(Comp);
@@ -53,7 +53,7 @@ describe('genericComposer', () => {
       const options = {
         loadingHandler: () => (<p>loading</p>),
       };
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData();
       }, options)(Comp);
       const el = shallow(<Container />);
@@ -64,7 +64,7 @@ describe('genericComposer', () => {
       const options = {
         errorHandler: e => (<p>{e.message}</p>),
       };
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData(new Error('Aiyo'));
       }, options)(Comp);
       const el = shallow(<Container />);
@@ -72,7 +72,7 @@ describe('genericComposer', () => {
     });
 
     it('should set the child ref', () => {
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData(null, { name: 'arunoda' });
       })(Comp);
       const el = mount(<Container name="arunoda" />);
@@ -83,7 +83,7 @@ describe('genericComposer', () => {
   describe('dataLoader features', () => {
     it('should allow to pass data multiple times', () => {
       let onData;
-      const Container = genericComposer((props, _onData) => {
+      const Container = compose((props, _onData) => {
         onData = _onData;
       })(Comp);
 
@@ -98,7 +98,7 @@ describe('genericComposer', () => {
     });
 
     it('should unsubscribe when unmounted', (done) => {
-      const Container = genericComposer((props, onData) => {
+      const Container = compose((props, onData) => {
         onData(null, {});
         return done;
       })(Comp);
@@ -109,7 +109,7 @@ describe('genericComposer', () => {
 
     it('should unsubscribe when subscribing again', (done) => {
       let onData;
-      const Container = genericComposer((props, _onData) => {
+      const Container = compose((props, _onData) => {
         onData = _onData;
         onData(null, {});
         return done;
@@ -121,7 +121,7 @@ describe('genericComposer', () => {
 
     it('should throw an error when sending data when unmounted', () => {
       let onData;
-      const Container = genericComposer((props, _onData) => {
+      const Container = compose((props, _onData) => {
         onData = _onData;
         onData(null, {});
       })(Comp);
@@ -141,7 +141,7 @@ describe('genericComposer', () => {
           const options = {
             propsToWatch: [],
           };
-          const Container = genericComposer((props, onData) => {
+          const Container = compose((props, onData) => {
             onData(null, { name: 'arunoda' });
           }, options)(Comp);
           const el = shallow(<Container />);
@@ -154,7 +154,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer(() => {
+          const Container = compose(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -174,7 +174,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer(() => {
+          const Container = compose(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -190,7 +190,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer(() => {
+          const Container = compose(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -207,7 +207,7 @@ describe('genericComposer', () => {
 
           const data = {};
           let callCount = 0;
-          const Container = genericComposer(() => {
+          const Container = compose(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -227,7 +227,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer(() => {
+          const Container = compose(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -250,7 +250,7 @@ describe('genericComposer', () => {
           const options = {
             shouldSubscribe: () => false,
           };
-          const Container = genericComposer((props, onData) => {
+          const Container = compose((props, onData) => {
             onData(null, { name: 'arunoda' });
           }, options)(Comp);
           const el = shallow(<Container />);
@@ -264,7 +264,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer(() => {
+          const Container = compose(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -279,7 +279,7 @@ describe('genericComposer', () => {
     describe('pure', () => {
       describe('default', () => {
         it('should run not be pure', () => {
-          const Container = genericComposer(() => null)(Comp);
+          const Container = compose(() => null)(Comp);
           const i = shallow(<Container />).instance();
           expect(i.shouldComponentUpdate()).to.be.equal(true);
         });
@@ -287,7 +287,7 @@ describe('genericComposer', () => {
 
       describe('with props', () => {
         it('should be true if props are different', () => {
-          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const Container = compose(() => null, { pure: true })(Comp);
           const i = shallow(<Container p1="10" />).instance();
 
           expect(i.shouldComponentUpdate({ p1: '11' }, {})).to.be.equal(true);
@@ -298,7 +298,7 @@ describe('genericComposer', () => {
         });
 
         it('should be false if props are the same', () => {
-          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const Container = compose(() => null, { pure: true })(Comp);
           const i = shallow(<Container p1="10" />).instance();
 
           expect(i.shouldComponentUpdate({ p1: '10' }, {}, {})).to.be.equal(false);
@@ -307,7 +307,7 @@ describe('genericComposer', () => {
 
       describe('with error', () => {
         it('should be true if errors are different', () => {
-          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const Container = compose(() => null, { pure: true })(Comp);
           const i = shallow(<Container />).instance();
 
           const error = new Error('hello');
@@ -320,7 +320,7 @@ describe('genericComposer', () => {
         });
 
         it('should be false if errors are the same', () => {
-          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const Container = compose(() => null, { pure: true })(Comp);
           const i = shallow(<Container />).instance();
 
           const error = new Error('hello');
@@ -334,7 +334,7 @@ describe('genericComposer', () => {
 
       describe('with data', () => {
         it('should be true if data are different', () => {
-          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const Container = compose(() => null, { pure: true })(Comp);
           const i = shallow(<Container />).instance();
 
           const data = { aa: 10 };
@@ -347,7 +347,7 @@ describe('genericComposer', () => {
         });
 
         it('should be false if data are the same', () => {
-          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const Container = compose(() => null, { pure: true })(Comp);
           const i = shallow(<Container />).instance();
 
           const data = { aa: 10 };

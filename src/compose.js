@@ -5,7 +5,7 @@ import pick from 'lodash.pick';
 // TODO: extend static props
 // TODO: get display name.
 
-export default function genericComposer(dataLoader, options = {}) {
+export default function compose(dataLoader, options = {}) {
   return function (Child) {
     const {
       errorHandler = (err) => { throw err; },
@@ -120,6 +120,11 @@ export default function genericComposer(dataLoader, options = {}) {
       }
     }
 
+    Container.__komposerData = {
+      dataLoader, options,
+    };
+
+    // TODO: Support stubbing
     return Container;
   };
 }
