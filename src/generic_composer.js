@@ -5,12 +5,12 @@ import pick from 'lodash.pick';
 // TODO: extend static props
 // TODO: get display name.
 
-export default function genericComposer(dataLoader, options) {
+export default function genericComposer(dataLoader, options = {}) {
   return function (Child) {
     const {
       errorHandler = (err) => { throw err; },
       loadingHandler = () => null,
-      context = {},
+      env = {},
       pure = false,
       propsToWatch = null, // Watch all the props.
       shouldSubscribe = null,
@@ -23,10 +23,6 @@ export default function genericComposer(dataLoader, options) {
         this.propsCache = {};
 
         this._subscribe(props, true);
-      }
-
-      componentDidMount() {
-        this._mounted = true;
       }
 
       componentWillReceiveProps(props) {
@@ -46,7 +42,7 @@ export default function genericComposer(dataLoader, options) {
       }
 
       componentWillUnmount() {
-        this._mounted = false;
+        this._unmounted = true;
         this._unsubscribe();
       }
 
@@ -70,7 +66,7 @@ export default function genericComposer(dataLoader, options) {
         if (!this._shouldSubscribe(props, firstRun)) return;
 
         const onData = (error, data) => {
-          if (!this._mounted && !firstRun) {
+          if (this._unmounted) {
             throw new Error(`Tyring set data after component(${Container.displayName}) has unmounted.`);
           }
 
@@ -89,7 +85,7 @@ export default function genericComposer(dataLoader, options) {
 
         // We need to do this before subscribing again.
         this._unsubscribe();
-        this._stop = dataLoader.call(context, onData);
+        this._stop = dataLoader(props, onData, env);
       }
 
       _unsubscribe() {
