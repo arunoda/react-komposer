@@ -275,5 +275,90 @@ describe('genericComposer', () => {
         });
       })
     })
+
+    describe('pure', () => {
+      describe('default', () => {
+        it('should run not be pure', () => {
+           const Container = genericComposer(() => null)(Comp);
+           const i = shallow(<Container />).instance();
+           expect(i.shouldComponentUpdate()).to.be.equal(true);
+         });
+      })
+
+      describe('with props', () => {
+        it('should be true if props are different', () => {
+          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const i = shallow(<Container p1="10"/>).instance();
+
+          expect(i.shouldComponentUpdate({p1: '11'}, {})).to.be.equal(true);
+          i.props = {p1: '11'};
+
+          expect(i.shouldComponentUpdate({p1: '11', p2: 10}, {}))
+            .to.be.equal(true);
+        });
+
+        it('should be false if props are the same', () => {
+          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const i = shallow(<Container p1="10"/>).instance();
+
+          expect(i.shouldComponentUpdate({p1: '10'}, {}, {})).to.be.equal(false);
+        });
+      });
+
+      describe('with error', () => {
+        it('should be true if errors are different', () => {
+          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const i = shallow(<Container/>).instance();
+
+          const error = new Error('hello');
+          expect(i.shouldComponentUpdate(i.props, {error})).to.be.equal(true);
+          i.state = {error};
+
+          const newError = new Error('hello');
+          expect(i.shouldComponentUpdate(i.props, {error: newError}))
+            .to.be.equal(true);
+        });
+
+        it('should be false if errors are the same', () => {
+          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const i = shallow(<Container/>).instance();
+
+          const error = new Error('hello');
+          expect(i.shouldComponentUpdate(i.props, {error})).to.be.equal(true);
+          i.state = {error};
+
+          expect(i.shouldComponentUpdate(i.props, {error}, {}))
+            .to.be.equal(false);
+        });
+      });
+
+      describe('with data', () => {
+        it('should be true if data are different', () => {
+          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const i = shallow(<Container/>).instance();
+
+          const data = {aa: 10};
+          expect(i.shouldComponentUpdate(i.props, {data})).to.be.equal(true);
+          i.state = {data};
+
+          const sameData = {aa: 10};
+          expect(i.shouldComponentUpdate(i.props, {data: sameData}, {}))
+            .to.be.equal(false);
+        });
+
+        it('should be false if data are the same', () => {
+          const Container = genericComposer(() => null, { pure: true })(Comp);
+          const i = shallow(<Container/>).instance();
+
+          const data = {aa: 10};
+          expect(i.shouldComponentUpdate(i.props, {data})).to.be.equal(true);
+          i.state = {data};
+
+          const sameData = {aa: 10};
+          expect(i.shouldComponentUpdate(i.props, {data: sameData}, {}))
+            .to.be.equal(false);
+        });
+      });
+    });
   });
 });
