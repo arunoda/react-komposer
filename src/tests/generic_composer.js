@@ -1,7 +1,8 @@
+/* eslint react/prefer-stateless-function: 0, react/prop-types: 0 */
+
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
-import sinon from 'sinon';
 import genericComposer from '../generic_composer';
 
 const { describe, it } = global;
@@ -17,7 +18,7 @@ describe('genericComposer', () => {
       const Container = genericComposer((props, onData) => {
         onData(null, {});
       })(Comp);
-      const el = shallow(<Container name="arunoda"/>);
+      const el = shallow(<Container name="arunoda" />);
       expect(el.html()).to.match(/arunoda/);
     });
 
@@ -34,7 +35,7 @@ describe('genericComposer', () => {
         onData(null, { name: 'arunoda' });
       })(({ name, age }) => (<p>{name}={age}</p>));
 
-      const el = shallow(<Container age={20}/>);
+      const el = shallow(<Container age={20} />);
       expect(el.html()).to.match(/arunoda=20/);
     });
 
@@ -45,12 +46,12 @@ describe('genericComposer', () => {
         expect(context.name).to.be.equal('arunoda');
         done();
       }, options)(Comp);
-      const el = shallow(<Container />);
+      shallow(<Container />);
     });
 
     it('should show the given loading handler when there is no data', () => {
       const options = {
-        loadingHandler: () => (<p>loading</p>)
+        loadingHandler: () => (<p>loading</p>),
       };
       const Container = genericComposer((props, onData) => {
         onData();
@@ -61,7 +62,7 @@ describe('genericComposer', () => {
 
     it('should show the given error handler when there is an error', () => {
       const options = {
-        errorHandler: (e) => (<p>{e.message}</p>)
+        errorHandler: e => (<p>{e.message}</p>),
       };
       const Container = genericComposer((props, onData) => {
         onData(new Error('Aiyo'));
@@ -72,9 +73,9 @@ describe('genericComposer', () => {
 
     it('should set the child ref', () => {
       const Container = genericComposer((props, onData) => {
-        onData(null, {name: 'arunoda'});
+        onData(null, { name: 'arunoda' });
       })(Comp);
-      const el = mount(<Container name="arunoda"/>);
+      const el = mount(<Container name="arunoda" />);
       expect(el.instance().child.props.name).to.be.equal('arunoda');
     });
   });
@@ -102,7 +103,7 @@ describe('genericComposer', () => {
         return done;
       })(Comp);
 
-      const el = mount(<Container name="arunoda"/>);
+      const el = mount(<Container name="arunoda" />);
       el.instance().componentWillUnmount();
     });
 
@@ -114,7 +115,7 @@ describe('genericComposer', () => {
         return done;
       })(Comp);
 
-      const el = mount(<Container name="arunoda"/>);
+      const el = mount(<Container name="arunoda" />);
       el.instance()._subscribe({ aa: 10 });
     });
 
@@ -125,10 +126,10 @@ describe('genericComposer', () => {
         onData(null, {});
       })(Comp);
 
-      const el = mount(<Container name="arunoda"/>);
+      const el = mount(<Container name="arunoda" />);
       el.instance().componentWillUnmount();
 
-      const run = () => onData(null, {aa: 10});
+      const run = () => onData(null, { aa: 10 });
       expect(run).to.throw(/Tyring set data after/);
     });
   });
@@ -153,7 +154,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer((props, _onData) => {
+          const Container = genericComposer(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -173,12 +174,12 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer((props, _onData) => {
+          const Container = genericComposer(() => {
             callCount += 1;
           }, options)(Comp);
 
-          const el = mount(<Container name='arunoda'/>);
-          el.instance()._subscribe({ name:'arunoda', age: 20 });
+          const el = mount(<Container name="arunoda" />);
+          el.instance()._subscribe({ name: 'arunoda', age: 20 });
 
           expect(callCount).to.be.equal(1);
         });
@@ -189,12 +190,12 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer((props, _onData) => {
+          const Container = genericComposer(() => {
             callCount += 1;
           }, options)(Comp);
 
-          const el = mount(<Container name='arunoda'/>);
-          el.instance()._subscribe({ name:'kamal', age: 20 });
+          const el = mount(<Container name="arunoda" />);
+          el.instance()._subscribe({ name: 'kamal', age: 20 });
 
           expect(callCount).to.be.equal(2);
         });
@@ -206,11 +207,11 @@ describe('genericComposer', () => {
 
           const data = {};
           let callCount = 0;
-          const Container = genericComposer((props, _onData) => {
+          const Container = genericComposer(() => {
             callCount += 1;
           }, options)(Comp);
 
-          const el = mount(<Container data={data}/>);
+          const el = mount(<Container data={data} />);
 
           // let's change the stuff inside the data
           data.foo = 100;
@@ -225,9 +226,8 @@ describe('genericComposer', () => {
             propsToWatch: ['name', 'age'],
           };
 
-          const data = {};
           let callCount = 0;
-          const Container = genericComposer((props, _onData) => {
+          const Container = genericComposer(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -240,7 +240,7 @@ describe('genericComposer', () => {
           // second run with changed props
           el.instance()._subscribe({ name: 'arunoda', age: 30 });
           expect(callCount).to.be.equal(2);
-        })
+        });
       });
     });
 
@@ -264,7 +264,7 @@ describe('genericComposer', () => {
           };
 
           let callCount = 0;
-          const Container = genericComposer((props, _onData) => {
+          const Container = genericComposer(() => {
             callCount += 1;
           }, options)(Comp);
 
@@ -273,61 +273,61 @@ describe('genericComposer', () => {
 
           expect(callCount).to.be.equal(2);
         });
-      })
-    })
+      });
+    });
 
     describe('pure', () => {
       describe('default', () => {
         it('should run not be pure', () => {
-           const Container = genericComposer(() => null)(Comp);
-           const i = shallow(<Container />).instance();
-           expect(i.shouldComponentUpdate()).to.be.equal(true);
-         });
-      })
+          const Container = genericComposer(() => null)(Comp);
+          const i = shallow(<Container />).instance();
+          expect(i.shouldComponentUpdate()).to.be.equal(true);
+        });
+      });
 
       describe('with props', () => {
         it('should be true if props are different', () => {
           const Container = genericComposer(() => null, { pure: true })(Comp);
-          const i = shallow(<Container p1="10"/>).instance();
+          const i = shallow(<Container p1="10" />).instance();
 
-          expect(i.shouldComponentUpdate({p1: '11'}, {})).to.be.equal(true);
-          i.props = {p1: '11'};
+          expect(i.shouldComponentUpdate({ p1: '11' }, {})).to.be.equal(true);
+          i.props = { p1: '11' };
 
-          expect(i.shouldComponentUpdate({p1: '11', p2: 10}, {}))
+          expect(i.shouldComponentUpdate({ p1: '11', p2: 10 }, {}))
             .to.be.equal(true);
         });
 
         it('should be false if props are the same', () => {
           const Container = genericComposer(() => null, { pure: true })(Comp);
-          const i = shallow(<Container p1="10"/>).instance();
+          const i = shallow(<Container p1="10" />).instance();
 
-          expect(i.shouldComponentUpdate({p1: '10'}, {}, {})).to.be.equal(false);
+          expect(i.shouldComponentUpdate({ p1: '10' }, {}, {})).to.be.equal(false);
         });
       });
 
       describe('with error', () => {
         it('should be true if errors are different', () => {
           const Container = genericComposer(() => null, { pure: true })(Comp);
-          const i = shallow(<Container/>).instance();
+          const i = shallow(<Container />).instance();
 
           const error = new Error('hello');
-          expect(i.shouldComponentUpdate(i.props, {error})).to.be.equal(true);
-          i.state = {error};
+          expect(i.shouldComponentUpdate(i.props, { error })).to.be.equal(true);
+          i.state = { error };
 
           const newError = new Error('hello');
-          expect(i.shouldComponentUpdate(i.props, {error: newError}))
+          expect(i.shouldComponentUpdate(i.props, { error: newError }))
             .to.be.equal(true);
         });
 
         it('should be false if errors are the same', () => {
           const Container = genericComposer(() => null, { pure: true })(Comp);
-          const i = shallow(<Container/>).instance();
+          const i = shallow(<Container />).instance();
 
           const error = new Error('hello');
-          expect(i.shouldComponentUpdate(i.props, {error})).to.be.equal(true);
-          i.state = {error};
+          expect(i.shouldComponentUpdate(i.props, { error })).to.be.equal(true);
+          i.state = { error };
 
-          expect(i.shouldComponentUpdate(i.props, {error}, {}))
+          expect(i.shouldComponentUpdate(i.props, { error }, {}))
             .to.be.equal(false);
         });
       });
@@ -335,27 +335,27 @@ describe('genericComposer', () => {
       describe('with data', () => {
         it('should be true if data are different', () => {
           const Container = genericComposer(() => null, { pure: true })(Comp);
-          const i = shallow(<Container/>).instance();
+          const i = shallow(<Container />).instance();
 
-          const data = {aa: 10};
-          expect(i.shouldComponentUpdate(i.props, {data})).to.be.equal(true);
-          i.state = {data};
+          const data = { aa: 10 };
+          expect(i.shouldComponentUpdate(i.props, { data })).to.be.equal(true);
+          i.state = { data };
 
-          const sameData = {aa: 10};
-          expect(i.shouldComponentUpdate(i.props, {data: sameData}, {}))
+          const sameData = { aa: 10 };
+          expect(i.shouldComponentUpdate(i.props, { data: sameData }, {}))
             .to.be.equal(false);
         });
 
         it('should be false if data are the same', () => {
           const Container = genericComposer(() => null, { pure: true })(Comp);
-          const i = shallow(<Container/>).instance();
+          const i = shallow(<Container />).instance();
 
-          const data = {aa: 10};
-          expect(i.shouldComponentUpdate(i.props, {data})).to.be.equal(true);
-          i.state = {data};
+          const data = { aa: 10 };
+          expect(i.shouldComponentUpdate(i.props, { data })).to.be.equal(true);
+          i.state = { data };
 
-          const sameData = {aa: 10};
-          expect(i.shouldComponentUpdate(i.props, {data: sameData}, {}))
+          const sameData = { aa: 10 };
+          expect(i.shouldComponentUpdate(i.props, { data: sameData }, {}))
             .to.be.equal(false);
         });
       });
