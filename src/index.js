@@ -22,3 +22,5 @@ export function merge(...enhancers) {
     }, Child);
   };
 }
+
+export const composeAll = merge;

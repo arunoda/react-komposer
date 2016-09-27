@@ -22,7 +22,11 @@ export default function compose(dataLoader, options = {}) {
         this.state = {};
         this.propsCache = {};
 
-        this._subscribe(props, true);
+        this._subscribe(props);
+      }
+
+      componentDidMount() {
+        this._mounted = true;
       }
 
       componentWillReceiveProps(props) {
@@ -46,7 +50,8 @@ export default function compose(dataLoader, options = {}) {
         this._unsubscribe();
       }
 
-      _shouldSubscribe(props, firstRun) {
+      _shouldSubscribe(props) {
+        const firstRun = !this._cachedWatchingProps;
         const nextProps = pick(props, propsToWatch);
         const currentProps = this._cachedWatchingProps || {};
         this._cachedWatchingProps = nextProps;
@@ -61,8 +66,8 @@ export default function compose(dataLoader, options = {}) {
         return !shallowEqual(currentProps, nextProps);
       }
 
-      _subscribe(props, firstRun) {
-        if (!this._shouldSubscribe(props, firstRun)) return;
+      _subscribe(props) {
+        if (!this._shouldSubscribe(props)) return;
 
         const onData = (error, data) => {
           if (this._unmounted) {
@@ -71,7 +76,7 @@ export default function compose(dataLoader, options = {}) {
 
           const payload = { error, data };
 
-          if (firstRun) {
+          if (!this._mounted) {
             this.state = {
               ...this.state,
               ...payload,

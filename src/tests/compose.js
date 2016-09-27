@@ -137,7 +137,7 @@ describe('compose', () => {
   describe('performance', () => {
     describe('with propsToWatch === []', () => {
       describe('dataLoader', () => {
-        it('should run for the first time', () => {
+        it('should run for the first time - kkrgr', () => {
           const options = {
             propsToWatch: [],
           };

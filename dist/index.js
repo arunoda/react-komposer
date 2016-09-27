@@ -3,20 +3,23 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.composeAll = exports.compose = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-exports.makeComposer = makeComposer;
+exports.setDefaults = setDefaults;
+exports.merge = merge;
 
-var _generic_composer = require('./generic_composer');
+var _compose2 = require('./compose');
 
-var _generic_composer2 = _interopRequireDefault(_generic_composer);
+var _compose3 = _interopRequireDefault(_compose2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function makeComposer() {
+var compose = exports.compose = _compose3.default; /* eslint import/prefer-default-export: 0 */
+function setDefaults() {
   var mainOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
   return function (dataLoader) {
@@ -24,6 +27,21 @@ function makeComposer() {
 
     var options = (0, _extends3.default)({}, mainOptions, otherOptions);
 
-    return (0, _generic_composer2.default)(dataLoader, options);
+    return (0, _compose3.default)(dataLoader, options);
   };
 }
+
+function merge() {
+  for (var _len = arguments.length, enhancers = Array(_len), _key = 0; _key < _len; _key++) {
+    enhancers[_key] = arguments[_key];
+  }
+
+  // TODO: Try to get a single HOC merging all the composers together
+  return function (Child) {
+    return enhancers.reduce(function (C, enhancer) {
+      return enhancer(C);
+    }, Child);
+  };
+}
+
+var composeAll = exports.composeAll = merge;
