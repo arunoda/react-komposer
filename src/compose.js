@@ -1,9 +1,8 @@
 import React from 'react';
 import shallowEqual from 'shallowequal';
 import pick from 'lodash.pick';
-
-// TODO: extend static props
-// TODO: get display name.
+import { mayBeStubbed } from 'react-stubber';
+import { inheritStatics } from './utils';
 
 export default function compose(dataLoader, options = {}) {
   return function (Child) {
@@ -129,7 +128,7 @@ export default function compose(dataLoader, options = {}) {
       dataLoader, options,
     };
 
-    // TODO: Support stubbing
-    return Container;
+    inheritStatics(Container, Child);
+    return mayBeStubbed(Container);
   };
 }

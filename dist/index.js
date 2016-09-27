@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.composeAll = exports.compose = undefined;
+exports.composeAll = exports.compose = exports.setStubbingMode = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -12,13 +12,18 @@ var _extends3 = _interopRequireDefault(_extends2);
 exports.setDefaults = setDefaults;
 exports.merge = merge;
 
+var _reactStubber = require('react-stubber');
+
 var _compose2 = require('./compose');
 
 var _compose3 = _interopRequireDefault(_compose2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var compose = exports.compose = _compose3.default; /* eslint import/prefer-default-export: 0 */
+/* eslint import/prefer-default-export: 0 */
+var setStubbingMode = exports.setStubbingMode = _reactStubber.setStubbingMode;
+var compose = exports.compose = _compose3.default;
+
 function setDefaults() {
   var mainOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 

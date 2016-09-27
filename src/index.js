@@ -1,6 +1,8 @@
 /* eslint import/prefer-default-export: 0 */
+import { setStubbingMode as _setStubbingMode } from 'react-stubber';
 import _compose from './compose';
 
+export const setStubbingMode = _setStubbingMode;
 export const compose = _compose;
 
 export function setDefaults(mainOptions = {}) {

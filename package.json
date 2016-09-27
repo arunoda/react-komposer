@@ -43,7 +43,9 @@
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",
+    "hoist-non-react-statics": "^1.2.0",
     "lodash.pick": "^4.4.0",
+    "react-stubber": "^1.0.0",
     "shallowequal": "^0.2.2"
   },
   "main": "dist/index.js",
