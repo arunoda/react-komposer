@@ -1,3 +1,5 @@
+/* eslint import/prefer-default-export: 0 */
+
 import hoistStatics from 'hoist-non-react-statics';
 
 export function inheritStatics(Container, ChildComponent) {
@@ -9,14 +11,6 @@ export function inheritStatics(Container, ChildComponent) {
       // If not, just add a default one.
       'ChildComponent';
 
-  Container.displayName = `Container(${childDisplayName})`;
+  Container.displayName = `Container(${childDisplayName})`; // eslint-disable-line
   return hoistStatics(Container, ChildComponent);
-}
-
-export function isReactNative() {
-  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
-    return true;
-  }
-
-  return false;
 }
