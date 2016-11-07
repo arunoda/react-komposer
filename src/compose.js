@@ -13,6 +13,7 @@ export default function compose(dataLoader, options = {}) {
       pure = false,
       propsToWatch = null, // Watch all the props.
       shouldSubscribe = null,
+      shouldUpdate = null,
     } = options;
 
     class Container extends React.Component {
@@ -33,6 +34,10 @@ export default function compose(dataLoader, options = {}) {
       }
 
       shouldComponentUpdate(nextProps, nextState) {
+        if (shouldUpdate) {
+          return shouldUpdate(this.props, nextProps);
+        }
+
         if (!pure) {
           return true;
         }
