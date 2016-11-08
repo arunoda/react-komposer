@@ -41,7 +41,7 @@ React Komposer helps you create such data containers and you only need to worry 
 ## Installation
 
 ```sh
-npm install --save react-komposer@2.0.0-beta-4
+npm install --save react-komposer@2
 ```
 
 ## Simple Example
