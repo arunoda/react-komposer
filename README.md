@@ -457,13 +457,21 @@ const Container = compose(getReduxLoader(myMapper))(UIComponent)
 #### For Meteor's Tracker
 
 ```js
-function getTrackerLoader(reactiveMapper) {
+//
+// compose-with-tracker.js
+//
+import {compose} from "react-komposer";
+import {Tracker} from "meteor/tracker";
+
+function getTrackerLoader(loaderFunc) {
   return (props, onData, env) => {
+  
     let trackerCleanup = () => null;
+  
     const handler = Tracker.nonreactive(() => {
       return Tracker.autorun(() => {
-				// assign the custom clean-up function.
-        trackerCleanup = reactiveMapper(props, onData, env);
+        // Store clean-up function if provided.
+        trackerCleanup = loaderFunc(props, onData, env) || (() => null);
       });
     });
 
@@ -474,13 +482,26 @@ function getTrackerLoader(reactiveMapper) {
   };
 }
 
+function composeWithTracker(loadFunc) {
+  return function(component) {
+    return compose(getTrackerLoader(loadFunc))(component);
+  };
+}
+
+export default composeWithTracker;
+//
+// end compose-with-tracker.js
+//
+
+//
 // usage
-function reactiveMapper(props, onData) {
+//
+function loadPosts(props, onData) {
   if (Meteor.subscribe('post', props.id).ready()) {
     const post = Posts.findOne({ id: props.id });
     onData(null, { post });
   };
 }
 
-const Container = compose(getTrackerLoader(reactiveMapper))(UIComponent);
+const Container = composeWithTracker(loadPosts)(UIComponent);
 ```
