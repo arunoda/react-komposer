@@ -68,6 +68,8 @@ function compose(dataLoader) {
     var propsToWatch = _options$propsToWatch === undefined ? null : _options$propsToWatch;
     var _options$shouldSubscr = options.shouldSubscribe;
     var shouldSubscribe = _options$shouldSubscr === undefined ? null : _options$shouldSubscr;
+    var _options$shouldUpdate = options.shouldUpdate;
+    var shouldUpdate = _options$shouldUpdate === undefined ? null : _options$shouldUpdate;
 
     var Container = function (_React$Component) {
       (0, _inherits3.default)(Container, _React$Component);
@@ -103,6 +105,10 @@ function compose(dataLoader) {
       }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState) {
+          if (shouldUpdate) {
+            return shouldUpdate(this.props, nextProps);
+          }
+
           if (!pure) {
             return true;
           }

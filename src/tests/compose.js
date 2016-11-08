@@ -287,18 +287,18 @@ describe('compose', () => {
 
       describe('with shouldUpdate', () => {
         it('should run should update', () => {
-          const nextProps = {aa: 20};
+          const nextProps = { aa: 20 };
 
           const options = {
             shouldUpdate(cp, np) {
-              expect(cp).to.deep.equal({aa: 10});
+              expect(cp).to.deep.equal({ aa: 10 });
               expect(np).to.deep.equal(nextProps);
               return false;
-            }
+            },
           };
 
           const Container = compose(() => null, options)(Comp);
-          const i = shallow(<Container aa={10}/>).instance();
+          const i = shallow(<Container aa={10} />).instance();
           expect(i.shouldComponentUpdate(nextProps)).to.be.equal(false);
         });
       });
