@@ -1,483 +1,455 @@
-# react-komposer
+# React Komposer
 
-Let's compose React containers and feed data into components. <br>
-(supports ReactNative as well)
+Feed data into React components by composing containers. <br/>
+(Works with any kind of data store whether it's Redux, Promises, RxJX, MobX or anything else)
 
 ## TOC
+<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
 
-* [Why](#why)
-* [Installation](#installation)
-* [Basic Usage](#basic-usage)
-* [API](#api)
-* [Using with XXX](#using-with-xxx)
-    - [Using with Promises](#using-with-promises)
-    - [Using with Meteor](#using-with-meteor)
-    - [Using with Rx.js Observables](#using-with-rxjs-observables)
-    - [Using with Redux](#using-with-redux)
-* [Extending](#extending)
-* [Stubbing](#stubbing)
-* [Caveats](#caveats)
+- [Why?](#why)
+- [Installation](#installation)
+- [Simple Example](#simple-example)
+- [Other Core Functionalities](#other-core-functionalities)
+	- [Subscribing to data](#subscribing-to-data)
+	- [Show Loading screen](#show-loading-screen)
+	- [Handling errors](#handling-errors)
+- [Performance](#performance)
+- [Set Defaults](#set-defaults)
+- [Passing an Environment (Like Dependency Injection)](#passing-an-environment-like-dependency-injection)
+- [Server Side Rendering (SSR)](#server-side-rendering-ssr)
+- [Accessing the UI Component (via refs)](#accessing-the-ui-component-via-refs)
+- [Merging Multiple Containers](#merging-multiple-containers)
+- [Stubbing](#stubbing)
+- [Migrating from 1.x](#migrating-from-1x)
+
+<!-- /TOC -->
 
 ## Why?
 
-Lately, in React we try to avoid the use of component state as much as possible and use props to handle the passing of data and actions.
-We call these stateless components **Dumb Components** or **UI Components.**
+In React, usually we build UI components and feed data into them via containers. Let's call them data containers.
+Inside that data containers, we may need to:
 
-There is another component layer on-top of these **Dumb Components** which handles the **data fetching** logic. We call these components **Containers**. Containers usually do things like:
+* access different data sources
+* show loading screens
+* handle errors
+* subscribe to data and clean-up subscripts as needed
+* re-fetch data when props changed
 
-* Request for data (invoke a subscription or just fetch it).
-* Show a loading screen while the data is fetching.
-* Once data arrives, pass it to the UI Component.
-* If there is an error, show it to the user.
-* It may need to re-fetch or re-subscribe when props change.
-* It needs to cleanup resources (like subscriptions) when the container is unmounting.
-
-If you want to do these yourself, you have to do a lot of **repetitive tasks**. This commonly leads to **human errors**.
-
-**Meet React Komposer**
-
-That's what we are going to fix with this project. You simply tell it how to get data and clean up resources, then it'll
-do the hard work for you. This is a universal project and works with **any kind of data source**, whether it's based on
-Promises, Rx.JS observables, a Redux store or even Meteor's Tracker.
+Among a lot of other things.
+React Komposer helps you create such data containers and you only need to worry about writing the data fetching(or integration) logic.
 
 ## Installation
 
-```
-npm i --save react-komposer
+```sh
+npm install --save react-komposer@2.0.0-beta-4
 ```
 
-## Basic Usage
+## Simple Example
 
-Let's say we need to build a clock. First let's create a UI Component to show the time.
+Let's assume we've got a UI component called Blog Post like this:
 
 ```js
-const Time = ({time}) => (<div>Time is: {time}</div>);
+const BlogPost = ({ post }) => (
+    <div>
+        <h2>{post.title}</h2>
+        <p>{post.content}</p>
+    </div>
+);
 ```
 
-Now let's define how to fetch data for this:
+Now we need to fetch data from the server. So, we'll create a dataLoader like this:
 
 ```js
-const onPropsChange = (props, onData) => {
-  const handle = setInterval(() => {
-    const time = (new Date()).toString();
-    onData(null, {time});
-  }, 1000);
+function postDataLoader(props, onData) {
+    // load data from the server. (using props.id to identify the post)
+    // (Here'll we'll use setTimeout for demonstration purpose)
+    setTimeout(function() {
+        const post = {
+            id: props.id,
+            title: 'Hello React Komposer',
+            content: 'This will help you to load data into your components.',
+        };
+        const data = { post };
 
-  const cleanup = () => clearInterval(handle);
-  return cleanup;
-};
+        // send the data as props to the BlogPost component.
+        // So, BlogPost will see the post object as a prop.
+        onData(null, data)
+    }, 1000);
+}
 ```
 
-In the above function, we get new data every second and send it via the `onData` callback. Additionally, we return a cleanup function from the function to cleanup its resources.
-
-Okay. Now it's time to create the clock Container, wrapped around our Time UI Component, using our `onPropsChange` function:
+Then let's create the container:
 
 ```js
 import { compose } from 'react-komposer';
-const Clock = compose(onPropsChange)(Time);
+const BlogPostContainer = compose(postDataLoader)(BlogPost);
 ```
 
-That's it. Now render the clock to the DOM.
+Now we could render the BlogPostContainer like this:
 
 ```js
 import ReactDOM from 'react-dom';
-ReactDOM.render(<Clock />, document.body);
+ReactDOM.render(<BlogPostContainer id='post-one' />, document.body);
 ```
 
-See this live: <https://jsfiddle.net/arunoda/jxse2yw8>
+[**Play with this example.**](http://www.webpackbin.com/4J6Z-fDlf)
 
-### Additional Benefits
+## Other Core Functionalities
 
-Other than the main benefits, now it's super easy to test our UI code. We can easily do it via a set of unit tests.
+Now we know how to load data to a component using React Komposer. Let's have a look at our other core functionalities.
 
-* For the UI Components, simply test the plain React component. In this case, `Time` (you can use [enzyme](https://github.com/airbnb/enzyme)).
-* Then test `onPropsChange` for different scenarios.
+### Subscribing to data
 
-## API
+Usually, we need to subscribe to a data source and update the UI as we get new changes. This is a part of the realtime UI's. With React Komposer, you could easily connect those subscriptions with UI components.
 
-You can customize the higher order component created by `compose` in few ways. Let's discuss.
-
-### Handling Errors
-
-Rather than showing the data, sometimes you need to deal with errors. Here's how to use `compose` for that:
+For the above BlogPost component, we can write a data loader like this:
 
 ```js
-const onPropsChange = (props, onData) => {
-  // oops some error.
-  onData(new Error('Oops'));
+function postDataLoader(props, onData) {
+    // Create a subscription to the data server.
+    // Use props.id to identify the post.
+    // (Here'll we'll use setInterval for demonstration purpose)
+
+    const handler = setInterval(function() {
+        const post = {
+            id: props.id,
+            title: 'Hello React Komposer',
+            content: `
+              This will help you to load data into your components.
+              - Updated at: ${new Date().toLocaleString()}
+            `
+        };
+        const data = { post };
+
+        // send the data as BlogPost component.
+        // So, BlogPost will see the post object as a prop.
+        onData(null, data)
+    }, 1000);
+
+    // return a function which cleanup the handler
+    return () => { clearInterval(handler) }
+}
+```
+
+Here we are calling the **onData** callback for every one second.  We've also returned a function from where it'll be used to clear the resources allocated by the subscription when the container unmounted.
+
+[**Play with this example.**](http://www.webpackbin.com/Vk2AEfPez)
+
+### Show Loading screen
+
+It'll take a bit of time to load data from the server. So, we usually show a loading screen.
+React storybook will take care of that automatically.
+
+For any data loader, we could get this by providing a loadingHandler like this:
+
+```js
+const options = {
+  loadingHandler: () => (<p>Loading...</p>)
+};
+const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+```
+
+**[Play with this example.](http://www.webpackbin.com/Vk_5lQ_xG)**
+
+We show the loading screen until you provide a data object to the onData function. Have a look at the following data loader:
+
+```js
+function postDataLoader(props, onData) {
+
+}
+```
+
+Since we've not invoked the onData callback, there'll be the loading screen forever.
+
+### Handling errors
+
+Usually when we are dealing with remote data, we need to handle errors as well. React Komposer has its own way of handling errors. Check this example:
+
+```js
+function postDataLoader(props, onData) {
+   setTimeout(function() {
+     // Assume we got an error object
+     const error = new Error('Oops. Something is not right.');
+     // pass the error
+     onData(error);
+   }, 1000);
+}
+```
+
+By default, we'll throw the error to the console. But you can provide a UI for error like this when creating the container:
+
+```js
+const options = {
+  errorHandler: (err) => (
+    <p style={{color: 'red'}}>
+       {err.message}
+    </p>
+  )
+};
+const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+```
+
+**[Play with this example.](http://www.webpackbin.com/Nk-4vmOgf)**
+
+## Performance
+
+Performance is really important when building a real world apps. React Komposer comes with few ways to tune the performance. Let's discuss.
+
+### Props Watching
+
+> By default, we watch and re-run data loader for every prop change.
+
+In the data loader, you can access props passed to your container like this:
+
+```js
+function postDataLoader(props, onData) {
+   console.log(props);
+}
+```
+
+We re-run the dataLoader for every prop change in the container. If we are using a prop inside the data loader, it's required to re-run the dataLoader when the prop changes.
+
+But reruns for any other prop change is not necessary.
+
+So, we can ask React Komposer to only re-run when given props have changed. Have a look at the following code:
+
+```js
+const options = {
+    propsToWatch: ['id']
+};
+const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+```
+
+Here we only re-run the data loader only when the prop named `id` gets changed.
+
+### Should Resubscribe
+
+> By default, this is null.
+
+This gives the same functionality as props watching, but with more control. With the **propsToWatch** option, we do a shallow comparison. If that doesn't work for you, you can use the **shouldSubscribe** option as shown below:
+
+```js
+const options = {
+    shouldSubscribe(currentProps, nextProps) {
+        // return true if you need to re-run the data loader again.
+    }
 };
 ```
 
-The error will be rendered to the screen (in place of where the component is rendered).
-You must provide a [JavaScript Error object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Error).
+### Pure
 
-You can clear it by passing some data again like this:
+> By default, this is false.
+
+
+This will take care of the component re-rendering for every prop change. You can make the container pure by applying the following option:
 
 ```js
-const onPropsChange = (props, onData) => {
-  // oops some error.
-  onData(new Error('Oops'));
-
-  setTimeout(() => {
-    onData(null, {time: Date.now()});
-  }, 5000);
+const options = {
+    pure: true,
 };
+const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
 ```
 
-### Detect props changes
+Then, this will add a [pure render mixin](https://facebook.github.io/react/docs/pure-render-mixin.html) to the React component. (This will compare props in shallow manner).
 
-Sometimes you can use the props to customize our data fetching logic. Here's how to do it:
+### Should Update
+
+> By default, this is null
+
+This will provide the same functionality as pure, but with more control. With pure, we compare props shallowly. But, you can use shouldUpdate option to compare it as you want.
+
+Check the following example:
 
 ```js
-const onPropsChange = (props, onData) => {
-  const handle = setInterval(() => {
-    const time = (props.timestamp)? Date.now() : (new Date()).toString();
-    onData(null, {time});
-  }, 1000);
-
-  const cleanup = () => clearInterval(handle);
-  return cleanup;
+const options = {
+    shouldUpdate(currentProps, nextProps) {
+        // return true if you need to render the compare with nextProps.
+    },
 };
+const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
 ```
 
-Here we are asking to make the Clock to display timestamp instead of the Date string. See:
+## Set Defaults
+
+Usually, you may want to use the same set of options for every container you create. So, you could set defaults like this:
 
 ```js
-ReactDOM.render((
-  <div>
-    <Clock timestamp={true}/>
-    <Clock />
-  </div>
-), document.body);
-```
+import { setDefaults } from 'react-komposer';
 
-See this live: <https://jsfiddle.net/arunoda/7qy1mxc7/>
-
-### Change the Loading Component
-
-```js
-const MyLoading = () => (<div>Hmm...</div>);
-const Clock = compose(onPropsChange, MyLoading)(Time);
-```
-
-> This custom loading component receives all the props passed to the UI Component as well.
-> So, based on those props, you can change the behaviour of the loading component also.
-
-### Change the Error Component
-
-```js
-const MyError = ({error}) => (<div>Error: {error.message}</div>);
-const Clock = compose(onPropsChange, null, MyError)(Time);
-```
-
-### Compose Multiple Containers
-
-Sometimes we need to compose multiple containers at once, in order to use different data sources. Checkout the following examples:
-
-```js
-const Clock = composeWithObservable(composerFn1)(Time);
-const MeteorClock = composeWithTracker(composerFn2)(Clock);
-
-export default MeteorClock;
-```
-
-For the above case, we've a utility called `composeAll` to make our life easier. To use it:
-
-```js
-export default composeAll(
-  composeWithObservable(composerFn1),
-  composeWithTracker(composerFn2)
-)(Time)
-```
-
-### Pure Containers
-
-`react-komposer` checks the purity of payload, error and props, avoiding unnecessary render function calls. That means
-we've implemented the `shouldComponentUpdate` lifecycle method, which follows something similar to React's [shallowCompare](https://facebook.github.io/react/docs/shallow-compare.html).
-
-If you need to turn off this functionality, you can do it like this:
-
-```js
-// You can use `composeWithPromise` or any other compose APIs
-// instead of `compose`.
-const Clock = compose(onPropsChange, null, null, {pure: false})(Time);
-```
-
-### Ref to base component
-
-In some situations, you need to get a ref to the base component that you pass to `react-komposer`. You can enable a `ref` with the `withRef` option:
-
-```js
-// You can use `composeWithPromise` or any other compose APIs
-// instead of `compose`.
-const Clock = compose(onPropsChange, null, null, {withRef: true})(Time);
-```
-
-The base component will then be accessible with `getWrappedInstance()`. <br/>
-Checkout this [test case](https://github.com/kadirahq/react-komposer/blob/master/lib/__tests__/compose.js#L90) for a proper example.
-
-### Change Default Components
-
-It is possible to change default error and loading components globally, so you don't need to set default components in every composer call.
-
-Here's how do it:
-
-```js
-import {
-  setDefaultErrorComponent,
-  setDefaultLoadingComponent,
-} from 'react-komposer';
-
-const ErrorComponent = () => (<div>My Error</div>);
-const LoadingComponent = () => (<div>My Loading</div>);
-
-setDefaultErrorComponent(ErrorComponent);
-setDefaultLoadingComponent(LoadingComponent);
-```
-
-> This is very important if you are using this in a React Native app,
-> as this project has no default components for React Native.
-> So you can set default components, as shown above, at the very beginning.
-
-## Using with XXX
-
-### Using with Promises
-
-For use with Promise-based data sources, you can use `composeWithPromise` instead of `compose`.
-
-```js
-import {composeWithPromise} from 'react-komposer'
-
-// Create a component to display Time
-const Time = ({time}) => (<div>{time}</div>);
-
-// Assume this get's the time from the Server
-const getServerTime = () => {
-  return new Promise((resolve) => {
-    const time = new Date().toString();
-    setTimeout(() => resolve({time}), 2000);
-  });
-};
-
-// Create the composer function and tell how to fetch data
-const composerFunction = (props) => {
-  return getServerTime();
-};
-
-// Compose the container
-const Clock = composeWithPromise(composerFunction)(Time, Loading);
-
-// Render the container
-ReactDOM.render(<Clock />, document.getElementById('react-root'));
-```
-
-See this live: <https://jsfiddle.net/arunoda/8wgeLexy/>
-
-### Using with Meteor
-
-For use with Meteor, you need to use `composeWithTracker` instead of `compose`, from where you can watch any Reactive data.
-
-```js
-import {composeWithTracker} from 'react-komposer';
-import PostList from '../components/post_list.jsx';
-
-function composer(props, onData) {
-  if (Meteor.subscribe('posts').ready()) {
-    const posts = Posts.find({}, {sort: {_id: 1}}).fetch();
-    onData(null, {posts});
-  };
-};
-
-export default composeWithTracker(composer)(PostList);
-```
-
-In addition to above, you can also return a cleanup function from the composer function. See the following example:
-
-```js
-import {composeWithTracker} from 'react-komposer';
-import PostList from '../components/post_list.jsx';
-
-const composerFunction = (props, onData) => {
-  // tracker related code
-  return () => {console.log('Container disposed!');}
-};
-
-// Note the use of composeWithTracker
-const Container = composeWithTracker(composerFunction)(PostList);
-```
-
-For more information, refer this article: [Using Meteor Data and React with Meteor 1.3](https://voice.kadira.io/using-meteor-data-and-react-with-meteor-1-3-13cb0935dedb)
-
-
-### Using with Rx.js Observables
-
-```js
-import {composeWithObservable} from 'react-komposer'
-
-// Create a component to display Time
-const Time = ({time}) => (<div>{time}</div>);
-
-const now = Rx.Observable.interval(1000)
-  .map(() => ({time: new Date().toString()}));
-
-// Create the composer function and tell how to fetch data
-const composerFunction = (props) => now;
-
-// Compose the container
-const Clock = composeWithObservable(composerFunction)(Time);
-
-// Render the container
-ReactDOM.render(<Clock />, document.getElementById('react-root'));
-```
-
-Try this live: <https://jsfiddle.net/arunoda/Lsdekh4y/>
-
-### Using with Redux
-
-```js
-
-const defaultState = {time: new Date().toString()};
-const store = Redux.createStore((state = defaultState, action) => {
-  switch(action.type) {
-    case 'UPDATE_TIME':
-      return {
-        ...state,
-        time: action.time
-      };
-    default:
-      return state;
-  }
+const myCompose = setDefaults({
+    pure: true,
+    propsToWatch: [],
+    loadingHandler: () => (<p>Loading...</p>),
 });
-
-setInterval(() => {
-  store.dispatch({
-    type: 'UPDATE_TIME',
-    time: new Date().toString()
-  });
-}, 1000);
-
-
-const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
-
-const onPropsChange = (props, onData) => {
-  onData(null, {time: store.getState().time});
-  return store.subscribe(() => {
-    const {time} = store.getState();
-    onData(null, {time})
-  });
-};
-
-const Clock = compose(onPropsChange)(Time);
-
-ReactDOM.render(<Clock />, document.getElementById('react'))
 ```
 
-Try this live: <https://jsfiddle.net/arunoda/wm6romh4/>
+Then you can use `myCompose` instead `compose` when creating containers.
 
-### Using with MobX
+> It's pretty useful to setDefaults like this create a customized composer for your app.
+
+
+You can override any of these options by providing options when creating the container.
+
+## Passing an Environment (Like Dependency Injection)
+
+This is a pretty neat feature where you can use to inject dependencies.
+
+Usually, your UI component doesn't know about app specific information. But containers do know that. Using env option of React Komposer you could pass a env where your data loaders could utilize.
+
+
+> This is useful to use with a custom composer created with setDefaults
+
+
+Have a look at the following example:
 
 ```js
-const store = mobx.observable({time: new Date().toString()});
+import { setDefaults } from 'react-komposer';
 
-setInterval(() => store.time = new Date().toString(), 1000);
+// This is the reduxStore of your app.
+const reduxStore = {};
 
-const Time = ({time}) => (<div><b>Time is</b>: {time}</div>);
-
-const onPropsChange = (props, onData) => {
-  const {time} = store;
-  onData(null, {time});
-};
-
-const Clock = composeWithMobx(onPropsChange)(Time);
-
-ReactDOM.render(<Clock />, document.getElementById('react'));
+const myCompose = setDefaults({
+    //...otherOptions
+    env: {
+        reduxStore
+    }
+});
 ```
 
-## Extending
-
-Containers built by React Komposer are still React components. This means that they can be extended in the same way
-you would extend any other component. This is demonstrated in the following example:
-
+Then you can access the environment from any dataLoader when the container is created **myCompose**.
 
 ```js
-const Tick = compose(onPropsChange)(Time);
-class Clock extends Tick {
-  componentDidMount() {
-    console.log('Clock started');
-
-    return super();
-  }
-  componentWillUnmount() {
-    console.log('Clock stopped');
-
-    return super();
-  }
-};
-Clock.displayName = 'ClockContainer';
-
-export default Clock;
+function postDataLoader(props, onData, env) {
+   // access the redux container and subscribe to that
+   return env.reduxStore.subscribe((state) => {
+       onData(null, state);
+   });
+}
 ```
 
-Remember to call `super` when overriding methods already defined in the Container.
+## Server Side Rendering (SSR)
+
+Usually data loaders run in the constructor of the React component. So, it'll run with SSR as well.
+But it won't stop subscriptions for you.
+
+So, you need to identify the SSR environment from your dataLoader, and do not subscribe for data inside that.
+Have a look at the following code base:
+
+```js
+function postDataLoader(props, onData, env) {
+   if (isSSR) {
+      const data = fetchData();
+      onData(null, data);
+      return;
+   }
+
+   const stopSubscription = watchData((data) => {
+      onData(null, data);
+   });
+   return stopSubscription;
+}
+```
+## Accessing the UI Component (via refs)
+
+Sometimes ( although not recommended) you may want to access the underlining UI component instead of the container. Then you can call it the **child** property of container instance.
+
+## Merging Multiple Containers
+
+Sometimes, you may want to use multiple data loaders for a single UI component. Then you will have to do something like this:
+
+```js
+const Container1 = compose(dataLoader1)(UIComponent);
+const Container2 = compose(dataLoader2)(Container1);
+const Container3 = compose(dataLoader3)(Container2);
+
+export default Container3;
+```
+
+With our merge utility, you could do it like this:
+
+```js
+import { merge } from 'react-komposer';
+
+export default merge(
+    compose(dataLoader1),
+    compose(dataLoader2),
+    compose(dataLoader3),
+)(UIComponent);
+```
 
 ## Stubbing
 
-It's very important to stub Containers used with `react-komposer` when we are doing isolated UI testing (especially with
-[react-storybook](https://github.com/kadirahq/react-storybook)). Here's how you can stub composers:
+Sometimes, you may wanna use containers created with React Komposer in environments where it couldn't work. <br/>
+(For an example, React Storybook. It might not have your dataStores)
 
-**First of all, this only works if you are using the `composeAll` utility function.**
+For those environments, you could stub your containers.
 
-At the very beginning of your initial JS file, set the following code:
+For that, simply put following lines before import any of your components.
+(In React Storybook, it should be the config.js file)
 
 ```js
-import { setStubbingMode } from 'react-komposer';
+import { setStubbingMode } from 'react-stubber';
 setStubbingMode(true);
 ```
 
-> In react-storybook, that's in the `.storybook/config.js` file.
+Then you could stub your containers as you want. Follow the [react-stubber](https://github.com/kadirahq/react-stubber) documentation for more information.
 
-Then all your containers will look like this:
+> Internally, React Komposer uses [react-stubber](https://github.com/kadirahq/react-stubber) to add stubbing support.
 
-![With no stub](docs/with-no-stub.png)
+## Migrating from 1.x
 
-If you need, you can set a stub composer and pass data to the original component, bypassing the actual composer function.
-You can do this, before using the component which has the Container.
+React Komposer 2.x is almost compatible with 1.x but with few minor changes. Here are they:
+
+### No default error and loading components
+
+1.x comes with default components for error and loading components. But, now you need to specify them manually with **errorHandler** and **loadingHandler** options.
+
+We do this because, we want to use React Komposer on both React and React Native environment. Shipping defaults components make it harder to.
+
+### ComposeAll is now merge
+
+1.x has a function called composeAll which does exactly the same functionality as merge. Now we have renamed it as merge. But still, composeAll is available.
+
+### By Default pure=false
+
+Earlier, all of the containers we created were pure. But now you need to pass the pure option to make it pure.
+
+### No utility composers for promises, redux and etc.
+
+Earlier, we shipped a set of composers for different kinds of data stores. But now they are not shipped with this project. We recommend you create a data loader generator instead. Then use it.
+
+> You may also publish it into NPM and share it with others.
+
+Have a look at some example data loader generators:
+
+**For Promises**
 
 ```js
-import { setComposerStub } from 'react-komposer';
-import CommentList from '../comment_list';
-import CreateComment from '../../containers/create_comment';
+function genPromiseLoader(promise) {
+    return (props, onData) {
+      promise
+        .then((data) => onData(null, data))
+        .catch((err) => onData(err))
+    };
+}
 
-// Create the stub for the composer.
-setComposerStub(CreateComment, (props) => {
-  const data = {
-    ...props,
-    create: () => {},
-  };
-
-  return data;
-});
+// usage
+const Container = compose(genPromiseLoader(somePromiseObject))(UIComponent);
 ```
 
-> In react-storybook, you can do this when you are writing stories.
+**For Redux**
 
-Here, the `CreateComment` container is being used inside the `CommentList` Container. We simply set a stubComposer,
-which returns some data. That data will be passed as props to the original UI Component, wrapped by the `CreateComment` Container.
+```js
+function getReduxLoader(mapper) {
+    return (props, onData, env) {
+        // Accessing the reduxStore via the env.
+        return env.reduxStore.subscribe((state) => {
+            onData(null, mapper(state));
+        });
+    };
+}
 
-This is how it looks after using the stub:
-
-![With stub](docs/with-stub.png)
-
-You can see a real example in the [Mantra sample blog app](https://github.com/mantrajs/mantra-sample-blog-app).
-
-## Caveats
-
-**SSR**
-
-On the server, we won't be able to cleanup resources even if you return the cleanup function. That's because there is no
-functionality to detect component unmount on the server. So make sure to handle the cleanup logic by yourself, in this case.
-
-**Composer re-run on any prop change**
-
-Right now, the composer function will run again for any prop change. We can fix this by watching props and deciding which
-prop has been changed. See [#4](https://github.com/kadirahq/react-komposer/issues/4).
+// usage (expect you to pass the reduxStore via the env)
+const myMapper = ({user}) => ({user});
+const Container = compose(getReduxLoader(myMapper))(UIComponent)
+```
