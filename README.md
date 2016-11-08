@@ -422,7 +422,7 @@ Earlier, we shipped a set of composers for different kinds of data stores. But n
 
 Have a look at some example data loader generators:
 
-**For Promises**
+#### For Promises
 
 ```js
 function genPromiseLoader(promise) {
@@ -437,7 +437,7 @@ function genPromiseLoader(promise) {
 const Container = compose(genPromiseLoader(somePromiseObject))(UIComponent);
 ```
 
-**For Redux**
+#### For Redux
 
 ```js
 function getReduxLoader(mapper) {
@@ -454,7 +454,7 @@ const myMapper = ({user}) => ({user});
 const Container = compose(getReduxLoader(myMapper))(UIComponent)
 ```
 
-**For Meteor's Tracker**
+#### For Meteor's Tracker
 
 ```js
 function getTrackerLoader(reactiveMapper) {
