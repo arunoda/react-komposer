@@ -19,6 +19,7 @@ Feed data into React components by composing containers. <br/>
 - [Server Side Rendering (SSR)](#server-side-rendering-ssr)
 - [Accessing the UI Component (via refs)](#accessing-the-ui-component-via-refs)
 - [Merging Multiple Containers](#merging-multiple-containers)
+- [Stubbing](#stubbing)
 - [Migrating from 1.x](#migrating-from-1x)
 
 <!-- /TOC -->
@@ -40,7 +41,7 @@ React Komposer helps you create such data containers and you only need to worry 
 ## Installation
 
 ```sh
-npm install --save react-komposer
+npm install --save react-komposer@2.0.0-beta-4
 ```
 
 ## Simple Example
@@ -375,6 +376,25 @@ export default merge(
     compose(dataLoader3),
 )(UIComponent);
 ```
+
+## Stubbing
+
+Sometimes, you may wanna use containers created with React Komposer in environments where it couldn't work. <br/>
+(For an example, React Storybook. It might not have your dataStores)
+
+For those environments, you could stub your containers.
+
+For that, simply put following lines before import any of your components.
+(In React Storybook, it should be the config.js file)
+
+```js
+import { setStubbingMode } from 'react-stubber';
+setStubbingMode(true);
+```
+
+Then you could stub your containers as you want. Follow the [react-stubber](https://github.com/kadirahq/react-stubber) documentation for more information.
+
+> Internally, React Komposer uses [react-stubber](https://github.com/kadirahq/react-stubber) to add stubbing support.
 
 ## Migrating from 1.x
 

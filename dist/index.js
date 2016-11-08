@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.composeAll = exports.compose = exports.setStubbingMode = undefined;
+exports.composeAll = exports.compose = exports.stub = exports.setStubbingMode = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -22,6 +22,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /* eslint import/prefer-default-export: 0 */
 var setStubbingMode = exports.setStubbingMode = _reactStubber.setStubbingMode;
+var stub = exports.stub = _reactStubber.stub;
 var compose = exports.compose = _compose3.default;
 
 function setDefaults() {
