@@ -444,7 +444,7 @@ function getReduxLoader(mapper) {
     return (props, onData, env) {
         // Accessing the reduxStore via the env.
         return env.reduxStore.subscribe((state) => {
-            onData(null, mapper(state));
+            onData(null, mapper(state, env));
         });
     };
 }
@@ -452,4 +452,35 @@ function getReduxLoader(mapper) {
 // usage (expect you to pass the reduxStore via the env)
 const myMapper = ({user}) => ({user});
 const Container = compose(getReduxLoader(myMapper))(UIComponent)
+```
+
+**For Meteor's Tracker**
+
+```js
+function getTrackerLoader(reactiveMapper) {
+  return (props, onData, env) => {
+    let trackerCleanup = () => null;
+    const handler = Tracker.nonreactive(() => {
+      return Tracker.autorun(() => {
+				// assign the custom clean-up function.
+        trackerCleanup = reactiveMapper(props, onData, env);
+      });
+    });
+
+    return () => {
+      trackerCleanup();
+      return handler.stop();
+    };
+  };
+}
+
+// usage
+function reactiveMapper(props, onData) {
+  if (Meteor.subscribe('post', props.id).ready()) {
+    const post = Posts.findOne({ id: props.id });
+    onData(null, { post });
+  };
+}
+
+const Container = compose(getTrackerLoader(reactiveMapper))(UIComponent);
 ```
