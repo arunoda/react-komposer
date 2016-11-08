@@ -1,9 +1,10 @@
 # React Komposer
 
-Feed data into React components by composing containers.
+Feed data into React components by composing containers. <br/>
 (Works with any kind of data store whether it's Redux, Promises, RxJX, MobX or anything else)
 
-<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+## TOC
+<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
 
 - [Why?](#why)
 - [Installation](#installation)
@@ -13,20 +14,12 @@ Feed data into React components by composing containers.
 	- [Show Loading screen](#show-loading-screen)
 	- [Handling errors](#handling-errors)
 - [Performance](#performance)
-	- [Props Watching](#props-watching)
-	- [Should Resubscribe](#should-resubscribe)
-	- [Pure](#pure)
-	- [Should Update](#should-update)
 - [Set Defaults](#set-defaults)
 - [Passing an Environment (Like Dependency Injection)](#passing-an-environment-like-dependency-injection)
 - [Server Side Rendering (SSR)](#server-side-rendering-ssr)
 - [Accessing the UI Component (via refs)](#accessing-the-ui-component-via-refs)
 - [Merging Multiple Containers](#merging-multiple-containers)
 - [Migrating from 1.x](#migrating-from-1x)
-	- [No default error and loading components](#no-default-error-and-loading-components)
-	- [ComposeAll is now merge](#composeall-is-now-merge)
-	- [By Default pure=false](#by-default-purefalse)
-	- [No utility composers for promises, redux and etc.](#no-utility-composers-for-promises-redux-and-etc)
 
 <!-- /TOC -->
 
