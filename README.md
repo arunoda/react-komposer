@@ -459,16 +459,16 @@ const Container = compose(getReduxLoader(myMapper))(UIComponent)
 ```js
 function getTrackerLoader(reactiveMapper) {
   return (props, onData, env) => {
-    let trackerCleanup = () => null;
+    let trackerCleanup = null;
     const handler = Tracker.nonreactive(() => {
       return Tracker.autorun(() => {
-				// assign the custom clean-up function.
+      	// assign the custom clean-up function.
         trackerCleanup = reactiveMapper(props, onData, env);
       });
     });
 
     return () => {
-      trackerCleanup();
+      if(typeof trackerCleanup === 'function') trackerCleanup();
       return handler.stop();
     };
   };
