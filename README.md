@@ -222,7 +222,7 @@ const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
 
 Here we only re-run the data loader only when the prop named `id` gets changed.
 
-### Should Resubscribe
+### Should Subscribe
 
 > By default, this is null.
 
