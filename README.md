@@ -441,7 +441,7 @@ const Container = compose(genPromiseLoader(somePromiseObject))(UIComponent);
 
 ```js
 function getReduxLoader(mapper) {
-    return (props, onData, env) {
+    return (props, onData, env) => {
         // Accessing the reduxStore via the env.
         return env.reduxStore.subscribe((state) => {
             onData(null, mapper(state, env));
