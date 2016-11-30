@@ -75,7 +75,7 @@ export default function compose(dataLoader, options = {}) {
 
         const onData = (error, data) => {
           if (this._unmounted) {
-            throw new Error(`Tyring set data after component(${Container.displayName}) has unmounted.`);
+            throw new Error(`Trying to set data after component(${Container.displayName}) has unmounted.`);
           }
 
           const payload = { error, data };
