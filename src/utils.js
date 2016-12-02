@@ -2,7 +2,7 @@
 
 import hoistStatics from 'hoist-non-react-statics';
 
-export function inheritStatics(Container, ChildComponent) {
+export function inheritStatics(Container, ChildComponent, displayName = 'Container') {
   const childDisplayName =
       // Get the display name if it's set.
       ChildComponent.displayName ||
@@ -11,6 +11,6 @@ export function inheritStatics(Container, ChildComponent) {
       // If not, just add a default one.
       'ChildComponent';
 
-  Container.displayName = `Container(${childDisplayName})`; // eslint-disable-line
+  Container.displayName = `${displayName}(${childDisplayName})`; // eslint-disable-line
   return hoistStatics(Container, ChildComponent);
 }
