@@ -133,7 +133,7 @@ export default function compose(dataLoader, options = {}) {
       dataLoader, options,
     };
 
-    inheritStatics(Container, Child);
+    inheritStatics(Container, Child, options.displayName);
     return mayBeStubbed(Container);
   };
 }
