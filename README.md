@@ -426,7 +426,7 @@ Have a look at some example data loader generators:
 
 ```js
 function genPromiseLoader(promise) {
-    return (props, onData) {
+    return (props, onData) => {
       promise
         .then((data) => onData(null, data))
         .catch((err) => onData(err))
