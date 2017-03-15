@@ -106,18 +106,18 @@ export default function compose(dataLoader, options = {}) {
         const props = this.props;
         const { data, error } = this.state;
 
-        if (error) {
-          return errorHandler(error);
-        }
-
-        if (!data) {
-          return loadingHandler();
-        }
-
         const finalProps = {
           ...props,
           ...data,
         };
+        
+        if (error) {
+          return errorHandler(error, finalProps);
+        }
+
+        if (!data) {
+          return loadingHandler(finalProps);
+        }
 
         const setChildRef = (c) => {
           this.child = c;
