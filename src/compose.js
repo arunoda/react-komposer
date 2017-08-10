@@ -14,6 +14,7 @@ export default function compose(dataLoader, options = {}) {
       propsToWatch = null, // Watch all the props.
       shouldSubscribe = null,
       shouldUpdate = null,
+      withRef = true,
     } = options;
 
     class Container extends React.Component {
@@ -123,9 +124,9 @@ export default function compose(dataLoader, options = {}) {
           this.child = c;
         };
 
-        return (
-          <Child ref={setChildRef} {...finalProps} />
-        );
+        return withRef
+          ? <Child ref={setChildRef} {...finalProps} />
+          : <Child {...finalProps} />;
       }
     }
 
