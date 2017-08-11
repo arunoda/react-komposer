@@ -50,6 +50,6 @@
   },
   "main": "dist/index.js",
   "engines": {
-    "npm": "^3.0.0"
+    "npm": ">=3.0.0"
   }
 }
