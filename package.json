@@ -8,45 +8,47 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublish": ". ./.scripts/prepublish.sh",
+    "prepublish": "rimraf dist && cross-env NODE_ENV=production babel --ignore tests,stories --plugins transform-runtime src --out-dir dist",
     "lint": "eslint src",
     "lintfix": "eslint src --fix",
-    "testonly": "mocha --require .scripts/mocha_runner src/**/tests/**/*.js",
+    "testonly": "mocha --require scripts/mocha_runner src/**/tests/**/*.js",
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -p 9010",
-    "publish-storybook": "bash .scripts/publish_storybook.sh"
+    "publish-storybook": "bash scripts/publish_storybook.sh"
   },
   "devDependencies": {
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2",
-    "babel-polyfill": "^6.13.0",
-    "babel-preset-react-app": "^0.2.1",
-    "babel-cli": "^6.14.0",
-    "babel-core": "^6.14.0",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "eslint": "^3.6.0",
-    "babel-eslint": "^6.1.2",
-    "eslint-config-airbnb": "^12.0.0",
-    "eslint-plugin-import": "^1.16.0",
-    "eslint-plugin-jsx-a11y": "^2.2.2",
-    "eslint-plugin-react": "^6.3.0",
-    "mocha": "^3.0.2",
-    "chai": "^3.5.0",
-    "sinon": "^1.17.6",
-    "enzyme": "^2.2.0",
-    "react-addons-test-utils": "^15.3.2",
-    "jsdom": "^9.5.0"
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-react-app": "^3.1.0",
+    "chai": "^4.1.2",
+    "cross-env": "^5.1.1",
+    "enzyme": "^3.1.0",
+    "eslint": "^4.10.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.4.0",
+    "jsdom": "^11.3.0",
+    "mocha": "^4.0.1",
+    "react": "^16.0.0",
+    "react-addons-test-utils": "^15.6.2",
+    "react-dom": "^16.0.0",
+    "rimraf": "^2.6.2",
+    "sinon": "^4.1.0"
   },
   "peerDependencies": {
-    "react": "^0.14.7 || ^15.0.0"
+    "react": "^15.0.0 || ^16.0.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.11.6",
-    "hoist-non-react-statics": "^1.2.0",
+    "babel-runtime": "^6.26.0",
+    "hoist-non-react-statics": "^2.3.1",
     "lodash.pick": "^4.4.0",
     "react-stubber": "^1.0.0",
-    "shallowequal": "^0.2.2"
+    "shallowequal": "^1.0.2"
   },
   "main": "dist/index.js",
   "engines": {

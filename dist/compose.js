@@ -1,89 +1,51 @@
-'use strict';
+import _Object$assign from 'babel-runtime/core-js/object/assign';
+import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
+import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
+import _createClass from 'babel-runtime/helpers/createClass';
+import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
+import _inherits from 'babel-runtime/helpers/inherits';
+import React from 'react';
+import shallowEqual from 'shallowequal';
+import pick from 'lodash.pick';
+import { mayBeStubbed } from 'react-stubber';
+import { inheritStatics } from './utils';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
-
-var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = require('babel-runtime/helpers/inherits');
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-exports.default = compose;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _shallowequal = require('shallowequal');
-
-var _shallowequal2 = _interopRequireDefault(_shallowequal);
-
-var _lodash = require('lodash.pick');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _reactStubber = require('react-stubber');
-
-var _utils = require('./utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function compose(dataLoader) {
-  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+export default function compose(dataLoader) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   return function (Child) {
-    var _options$errorHandler = options.errorHandler;
-    var errorHandler = _options$errorHandler === undefined ? function (err) {
+    var _options$errorHandler = options.errorHandler,
+        errorHandler = _options$errorHandler === undefined ? function (err) {
       throw err;
-    } : _options$errorHandler;
-    var _options$loadingHandl = options.loadingHandler;
-    var loadingHandler = _options$loadingHandl === undefined ? function () {
+    } : _options$errorHandler,
+        _options$loadingHandl = options.loadingHandler,
+        loadingHandler = _options$loadingHandl === undefined ? function () {
       return null;
-    } : _options$loadingHandl;
-    var _options$env = options.env;
-    var env = _options$env === undefined ? {} : _options$env;
-    var _options$pure = options.pure;
-    var pure = _options$pure === undefined ? false : _options$pure;
-    var _options$propsToWatch = options.propsToWatch;
-    var propsToWatch = _options$propsToWatch === undefined ? null : _options$propsToWatch;
-    var _options$shouldSubscr = options.shouldSubscribe;
-    var shouldSubscribe = _options$shouldSubscr === undefined ? null : _options$shouldSubscr;
-    var _options$shouldUpdate = options.shouldUpdate;
-    var shouldUpdate = _options$shouldUpdate === undefined ? null : _options$shouldUpdate;
+    } : _options$loadingHandl,
+        _options$env = options.env,
+        env = _options$env === undefined ? {} : _options$env,
+        _options$pure = options.pure,
+        pure = _options$pure === undefined ? false : _options$pure,
+        _options$propsToWatch = options.propsToWatch,
+        propsToWatch = _options$propsToWatch === undefined ? null : _options$propsToWatch,
+        _options$shouldSubscr = options.shouldSubscribe,
+        shouldSubscribe = _options$shouldSubscr === undefined ? null : _options$shouldSubscr,
+        _options$shouldUpdate = options.shouldUpdate,
+        shouldUpdate = _options$shouldUpdate === undefined ? null : _options$shouldUpdate;
 
     var Container = function (_React$Component) {
-      (0, _inherits3.default)(Container, _React$Component);
+      _inherits(Container, _React$Component);
 
       function Container(props) {
         var _ref;
 
-        (0, _classCallCheck3.default)(this, Container);
+        _classCallCheck(this, Container);
 
         for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           args[_key - 1] = arguments[_key];
         }
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (_ref = Container.__proto__ || (0, _getPrototypeOf2.default)(Container)).call.apply(_ref, [this, props].concat(args)));
+        var _this = _possibleConstructorReturn(this, (_ref = Container.__proto__ || _Object$getPrototypeOf(Container)).call.apply(_ref, [this, props].concat(args)));
 
         _this.state = {};
         _this.propsCache = {};
@@ -92,7 +54,7 @@ function compose(dataLoader) {
         return _this;
       }
 
-      (0, _createClass3.default)(Container, [{
+      _createClass(Container, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
           this._mounted = true;
@@ -113,7 +75,7 @@ function compose(dataLoader) {
             return true;
           }
 
-          return !(0, _shallowequal2.default)(this.props, nextProps) || this.state.error !== nextState.error || !(0, _shallowequal2.default)(this.state.data, nextState.data);
+          return !shallowEqual(this.props, nextProps) || this.state.error !== nextState.error || !shallowEqual(this.state.data, nextState.data);
         }
       }, {
         key: 'componentWillUnmount',
@@ -125,7 +87,7 @@ function compose(dataLoader) {
         key: '_shouldSubscribe',
         value: function _shouldSubscribe(props) {
           var firstRun = !this._cachedWatchingProps;
-          var nextProps = (0, _lodash2.default)(props, propsToWatch);
+          var nextProps = pick(props, propsToWatch);
           var currentProps = this._cachedWatchingProps || {};
           this._cachedWatchingProps = nextProps;
 
@@ -136,7 +98,7 @@ function compose(dataLoader) {
 
           if (propsToWatch === null) return true;
           if (propsToWatch.length === 0) return false;
-          return !(0, _shallowequal2.default)(currentProps, nextProps);
+          return !shallowEqual(currentProps, nextProps);
         }
       }, {
         key: '_subscribe',
@@ -147,13 +109,13 @@ function compose(dataLoader) {
 
           var onData = function onData(error, data) {
             if (_this2._unmounted) {
-              throw new Error('Tyring set data after component(' + Container.displayName + ') has unmounted.');
+              throw new Error('Trying to set data after component(' + Container.displayName + ') has unmounted.');
             }
 
             var payload = { error: error, data: data };
 
             if (!_this2._mounted) {
-              _this2.state = (0, _extends3.default)({}, _this2.state, payload);
+              _this2.state = _Object$assign({}, _this2.state, payload);
               return;
             }
 
@@ -177,9 +139,9 @@ function compose(dataLoader) {
           var _this3 = this;
 
           var props = this.props;
-          var _state = this.state;
-          var data = _state.data;
-          var error = _state.error;
+          var _state = this.state,
+              data = _state.data,
+              error = _state.error;
 
 
           if (error) {
@@ -190,23 +152,24 @@ function compose(dataLoader) {
             return loadingHandler();
           }
 
-          var finalProps = (0, _extends3.default)({}, props, data);
+          var finalProps = _Object$assign({}, props, data);
 
           var setChildRef = function setChildRef(c) {
             _this3.child = c;
           };
 
-          return _react2.default.createElement(Child, (0, _extends3.default)({ ref: setChildRef }, finalProps));
+          return React.createElement(Child, _Object$assign({ ref: setChildRef }, finalProps));
         }
       }]);
+
       return Container;
-    }(_react2.default.Component);
+    }(React.Component);
 
     Container.__komposerData = {
       dataLoader: dataLoader, options: options
     };
 
-    (0, _utils.inheritStatics)(Container, Child);
-    return (0, _reactStubber.mayBeStubbed)(Container);
+    inheritStatics(Container, Child);
+    return mayBeStubbed(Container);
   };
 }

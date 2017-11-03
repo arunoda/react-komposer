@@ -17,5 +17,7 @@
     "func-names": 0,
     # propTypes can be object
     "react/forbid-prop-types": 0,
+    "linebreak-style": 0,
+    "prefer-destructuring": 0
   },
 }
