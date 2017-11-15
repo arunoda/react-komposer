@@ -42,7 +42,7 @@ var _lodash = require('lodash.pick');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _reactStubber = require('react-stubber');
+var _reactStubber = require('@storybook/react-stubber');
 
 var _utils = require('./utils');
 

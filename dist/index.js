@@ -12,7 +12,7 @@ var _extends3 = _interopRequireDefault(_extends2);
 exports.setDefaults = setDefaults;
 exports.merge = merge;
 
-var _reactStubber = require('react-stubber');
+var _reactStubber = require('@storybook/react-stubber');
 
 var _compose2 = require('./compose');
 
