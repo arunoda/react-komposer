@@ -71,12 +71,23 @@ describe('compose', () => {
       expect(el.html()).to.match(/Aiyo/);
     });
 
-    it('should set the child ref', () => {
+    it('should set the child ref by default', () => {
       const Container = compose((props, onData) => {
         onData(null, { name: 'arunoda' });
       })(Comp);
       const el = mount(<Container name="arunoda" />);
       expect(el.instance().child.props.name).to.be.equal('arunoda');
+    });
+
+    it("should't set the child ref if withRef is false", () => {
+      const options = {
+        withRef: false,
+      };
+      const Container = compose((props, onData) => {
+        onData(null, { name: 'arunoda' });
+      }, options)(Comp);
+      const el = mount(<Container name="arunoda" />);
+      expect(el.instance()).not.to.have.property('child');
     });
   });
 
@@ -130,7 +141,7 @@ describe('compose', () => {
       el.instance().componentWillUnmount();
 
       const run = () => onData(null, { aa: 10 });
-      expect(run).to.throw(/Tyring set data after/);
+      expect(run).to.throw(/Trying to set data after/);
     });
   });
 

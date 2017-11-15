@@ -2,7 +2,7 @@
 import {
   setStubbingMode as _setStubbingMode,
   stub as _stub,
-} from 'react-stubber';
+} from '@storybook/react-stubber';
 import _compose from './compose';
 
 export const setStubbingMode = _setStubbingMode;
