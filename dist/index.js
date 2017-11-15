@@ -26,10 +26,10 @@ var stub = exports.stub = _reactStubber.stub;
 var compose = exports.compose = _compose3.default;
 
 function setDefaults() {
-  var mainOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var mainOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   return function (dataLoader) {
-    var otherOptions = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var otherOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var options = (0, _extends3.default)({}, mainOptions, otherOptions);
 
