@@ -184,7 +184,7 @@ describe('compose', () => {
           expect(callCount).to.be.equal(1);
         });
 
-        it('should not run if the watching props changed', () => {
+        it('should run if the watching props changed', () => {
           const options = {
             propsToWatch: ['name'],
           };
