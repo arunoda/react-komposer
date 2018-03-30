@@ -441,9 +441,10 @@ const Container = compose(genPromiseLoader(somePromiseObject))(UIComponent);
 
 ```js
 function getReduxLoader(mapper) {
-    return (props, onData, env) => {
+    return (props, onData, env, container) => {
         // Accessing the reduxStore via the env.
         return env.reduxStore.subscribe((state) => {
+            if (container._unmounted) return;
             onData(null, mapper(state, env));
         });
     };
@@ -458,10 +459,11 @@ const Container = compose(getReduxLoader(myMapper))(UIComponent)
 
 ```js
 function getTrackerLoader(reactiveMapper) {
-  return (props, onData, env) => {
+  return (props, onData, env, container) => {
     let trackerCleanup = null;
     const handler = Tracker.nonreactive(() => {
       return Tracker.autorun(() => {
+        if (container._unmounted) return;
       	// assign the custom clean-up function.
         trackerCleanup = reactiveMapper(props, onData, env);
       });
