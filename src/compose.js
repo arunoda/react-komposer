@@ -93,7 +93,7 @@ export default function compose(dataLoader, options = {}) {
 
         // We need to do this before subscribing again.
         this._unsubscribe();
-        this._stop = dataLoader(props, onData, env);
+        this._stop = dataLoader(props, onData, env, this);
       }
 
       _unsubscribe() {
