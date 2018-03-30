@@ -130,7 +130,7 @@ describe('compose', () => {
       el.instance().componentWillUnmount();
 
       const run = () => onData(null, { aa: 10 });
-      expect(run).to.throw(/Tyring set data after/);
+      expect(run).to.throw(/Trying to set data after/);
     });
   });
 
