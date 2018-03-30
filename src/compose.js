@@ -56,7 +56,7 @@ export default function compose(dataLoader, options = {}) {
 
       _shouldSubscribe(props) {
         const firstRun = !this._cachedWatchingProps;
-        const nextProps = pick(props, propsToWatch);
+        const nextProps = propsToWatch ? pick(props, propsToWatch) : props;
         const currentProps = this._cachedWatchingProps || {};
         this._cachedWatchingProps = nextProps;
 

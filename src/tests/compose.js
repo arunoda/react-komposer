@@ -1,4 +1,4 @@
-/* eslint react/prefer-stateless-function: 0, react/prop-types: 0 */
+/* eslint no-unused-expressions: 0, react/prefer-stateless-function: 0, react/prop-types: 0 */
 
 import React from 'react';
 import { shallow, mount } from 'enzyme';
@@ -184,7 +184,7 @@ describe('compose', () => {
           expect(callCount).to.be.equal(1);
         });
 
-        it('should not run if the watching props changed', () => {
+        it('should run if the watching props changed', () => {
           const options = {
             propsToWatch: ['name'],
           };
@@ -241,6 +241,25 @@ describe('compose', () => {
           el.instance()._subscribe({ name: 'arunoda', age: 30 });
           expect(callCount).to.be.equal(2);
         });
+
+        it('should watch all props', () => {
+          const options = {};
+
+          let callCount = 0;
+          const Container = compose(() => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name="arunoda" age={20} />);
+
+          // first run with same props
+          el.instance()._subscribe({ name: 'arunoda', age: 20 });
+          expect(callCount).to.be.equal(2);
+
+          // second run with changed props
+          el.instance()._subscribe({ name: 'arunoda', age: 20 });
+          expect(callCount).to.be.equal(3);
+        });
       });
     });
 
@@ -255,6 +274,84 @@ describe('compose', () => {
           }, options)(Comp);
           const el = shallow(<Container />);
           expect(el.html()).to.match(/arunoda/);
+        });
+
+        it('should run for all props', () => {
+          const options = {
+            shouldSubscribe: (props, nextProps) => {
+              const propKeys = Object.keys(props);
+              expect(propKeys).to.have.length(2).and.include.members(['name', 'age']);
+              const nextPropKeys = Object.keys(nextProps);
+              expect(nextPropKeys).to.have.length(2).and.include.members(['name', 'age']);
+
+              return props.name !== nextProps.name;
+            },
+          };
+
+          let callCount = 0;
+          const Container = compose(() => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name="arunoda" age="20" />);
+
+          el.instance()._subscribe({ name: 'arunoda', age: 20 });
+          expect(callCount).to.be.equal(1);
+
+          el.instance()._subscribe({ name: 'nacho', age: 28 });
+          expect(callCount).to.be.equal(2);
+        });
+
+        it('should run for watched props', () => {
+          const options = {
+            propsToWatch: ['name'],
+            shouldSubscribe: (props, nextProps) => {
+              const propKeys = Object.keys(props);
+              expect(propKeys).to.have.length(1).and.include('name');
+              const nextPropKeys = Object.keys(nextProps);
+              expect(nextPropKeys).to.have.length(1).and.include('name');
+
+              return props.name !== nextProps.name;
+            },
+          };
+
+          let callCount = 0;
+          const Container = compose(() => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name="arunoda" />);
+
+          el.instance()._subscribe({ name: 'arunoda' });
+          expect(callCount).to.be.equal(1);
+
+          el.instance()._subscribe({ name: 'nacho' });
+          expect(callCount).to.be.equal(2);
+        });
+
+        it('should not run for unwatched props', () => {
+          const options = {
+            propsToWatch: ['age'],
+            shouldSubscribe: (props, nextProps) => {
+              expect(props).to.be.empty;
+              expect(nextProps).to.be.empty;
+
+              return props.name !== nextProps.name;
+            },
+          };
+
+          let callCount = 0;
+          const Container = compose(() => {
+            callCount += 1;
+          }, options)(Comp);
+
+          const el = mount(<Container name="arunoda" />);
+
+          el.instance()._subscribe({ name: 'arunoda' });
+          expect(callCount).to.be.equal(1);
+
+          el.instance()._subscribe({ name: 'nacho' });
+          expect(callCount).to.be.equal(1);
         });
 
         it('should ignore propsToWatch', () => {
