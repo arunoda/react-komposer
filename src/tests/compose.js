@@ -72,9 +72,10 @@ describe('compose', () => {
     });
 
     it('should set the child ref', () => {
+      const options = { withRef: true };
       const Container = compose((props, onData) => {
         onData(null, { name: 'arunoda' });
-      })(Comp);
+      }, options)(Comp);
       const el = mount(<Container name="arunoda" />);
       expect(el.instance().child.props.name).to.be.equal('arunoda');
     });
